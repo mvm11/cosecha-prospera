@@ -11,6 +11,7 @@ export default function SalesDiaryScreen() {
         id: number;
         date: string;
         total_amount: number;
+        kilograms_sold: number;
     } | undefined>();
 
     const handleAddSale = () => {
@@ -18,12 +19,12 @@ export default function SalesDiaryScreen() {
         setModalVisible(true);
     };
 
-    const handleEditSale = (sale: { id: number; date: string; total_amount: number }) => {
+    const handleEditSale = (sale: { id: number; date: string; total_amount: number; kilograms_sold: number }) => {
         setEditingSale(sale);
         setModalVisible(true);
     };
 
-    const handleSaveSale = async (data: { date: string; total_amount: number }) => {
+    const handleSaveSale = async (data: { date: string; total_amount: number; kilograms_sold: number }) => {
         if (editingSale) {
             return await updateSale(editingSale.id, data);
         } else {
