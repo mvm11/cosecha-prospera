@@ -1,7 +1,10 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// ✅ SECURITY FIX: CORS configuration based on environment
+const isDev = Deno.env.get('ENVIRONMENT') !== 'production';
+
 const CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": isDev ? "*" : "https://your-production-domain.com",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json"
@@ -56,20 +59,43 @@ async function authenticateUser(supabase, token) {
  * Parses and validates request body fields
  */
 async function parseAndValidateBody(req) {
-    const { region, hectares, coffee_variety } = await req.json();
+    // ✅ SECURITY FIX: Check request size limit (1MB max)
+    const contentLength = req.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 1048576) {
+        throw new Error('Request body too large (max 1MB)');
+    }
 
+    const body = await req.json();
+    const { region, hectares, coffee_variety } = body;
+
+    // ✅ SECURITY FIX: Validate field existence
     if (!region || !hectares || !coffee_variety) {
         throw new Error('Missing required fields');
     }
 
-    if (typeof hectares !== 'number' || hectares <= 0) {
-        throw new Error('Hectares must be a positive number');
+    // ✅ SECURITY FIX: Validate types to prevent object injection
+    if (typeof region !== 'string' || typeof coffee_variety !== 'string') {
+        throw new Error('Invalid field types - strings expected');
     }
 
+    // ✅ SECURITY FIX: Validate string lengths to prevent DoS
+    if (region.length > 100 || coffee_variety.length > 100) {
+        throw new Error('Field too long (max 100 characters)');
+    }
+
+    // ✅ SECURITY FIX: Validate hectares range
+    if (typeof hectares !== 'number' || hectares <= 0 || hectares > 10000) {
+        throw new Error('Hectares must be a positive number between 0 and 10000');
+    }
+
+    // ✅ SECURITY FIX: Sanitize strings (trim and limit)
+    const cleanRegion = region.trim().substring(0, 100);
+    const cleanVariety = coffee_variety.trim().substring(0, 100);
+
     return {
-        region,
+        region: cleanRegion,
         hectares,
-        coffee_variety
+        coffee_variety: cleanVariety
     };
 }
 

@@ -1,8 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import * as XLSX from 'https://esm.sh/xlsx@0.18.5';
 
+// ✅ SECURITY FIX: CORS configuration based on environment
+const isDev = Deno.env.get('ENVIRONMENT') !== 'production';
+
 const CORS_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': isDev ? '*' : 'https://your-production-domain.com',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 

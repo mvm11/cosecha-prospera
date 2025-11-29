@@ -1,7 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+// ✅ SECURITY FIX: CORS configuration based on environment
+// In development: allow all origins for easier testing
+// In production: restrict to specific domain (update with your actual domain)
+const isDev = Deno.env.get('ENVIRONMENT') !== 'production';
+
 const CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": isDev ? "*" : "https://your-production-domain.com",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json"
@@ -137,12 +142,14 @@ async function callGemini(prompt: string) {
         throw new Error('Server configuration error: Missing AI key');
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    // ✅ SECURITY FIX: API key moved to header instead of URL query param
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
     const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey,  // API key in header, not URL
         },
         body: JSON.stringify({
             contents: [{
@@ -175,6 +182,12 @@ async function callGemini(prompt: string) {
  * Main request handler
  */
 async function analyzeMarketHandler(req: Request) {
+    // ✅ SECURITY FIX: Check request size limit (1MB max)
+    const contentLength = req.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 1048576) {
+        throw new Error('Request body too large (max 1MB)');
+    }
+
     const supabase = createSupabaseClient();
     const token = extractAuthToken(req);
     const user = await authenticateUser(supabase, token);
