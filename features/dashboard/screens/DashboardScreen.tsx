@@ -17,18 +17,6 @@ export default function DashboardScreen() {
         await supabase.auth.signOut();
     };
 
-    const handleAnalyze = () => {
-        Alert.alert('Coming Soon', 'AI Analysis will be available in the next update!');
-    };
-
-    const handleNavigateToSalesDiary = () => {
-        router.push('/sales-diary');
-    };
-
-    const handleNavigateToProfile = () => {
-        router.push('/profile');
-    };
-
     const handleRefreshPrices = async () => {
         if (!session) {
             Alert.alert('Error', 'You must be logged in to refresh prices');
@@ -113,12 +101,6 @@ export default function DashboardScreen() {
                     color="#27ae60"
                     disabled={refreshing}
                 />
-                <View style={{ height: 10 }} />
-                <Button title="Analyze with AI" onPress={handleAnalyze} color="#2980b9" />
-                <View style={{ height: 10 }} />
-                <Button title="My Sales Diary" onPress={handleNavigateToSalesDiary} color="#8e44ad" />
-                <View style={{ height: 10 }} />
-                <Button title="My Profile" onPress={handleNavigateToProfile} color="#d35400" />
             </View>
         </ScrollView>
     );
