@@ -1,6 +1,7 @@
+
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Button, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../../core/supabase';
 import { useAuth } from '../../auth/context/AuthContext';
 import PriceCard from '../components/PriceCard';
@@ -97,6 +98,14 @@ export default function DashboardScreen() {
                 </View>
             )}
 
+            {/* AI Analysis Button */}
+            <TouchableOpacity
+                style={styles.aiButton}
+                onPress={() => router.push('/ai-analysis')}
+            >
+                <Text style={styles.aiButtonText}>✨ Analyze with AI</Text>
+            </TouchableOpacity>
+
             <View style={styles.actions}>
                 <Button
                     title={refreshing ? "Fetching from FNC..." : "Refresh Prices from FNC"}
@@ -146,7 +155,24 @@ const styles = StyleSheet.create({
         color: '#999',
         marginTop: 5,
     },
+    aiButton: {
+        backgroundColor: '#8e44ad', // Purple for AI
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginBottom: 20,
+        shadowColor: '#8e44ad',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    aiButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
     actions: {
-        marginTop: 20,
+        gap: 10,
     },
 });
