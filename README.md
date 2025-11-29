@@ -1,776 +1,403 @@
-# Cosecha Próspera - Technical Documentation
+# ☕ Cosecha Próspera
 
-## 📋 Project Overview
+> Aplicación móvil inteligente que ayuda a caficultores colombianos a tomar decisiones informadas sobre el momento óptimo para vender su cosecha.
 
-**Cosecha Próspera** (Prosperous Harvest) is an AI-powered mobile application designed to help Colombian coffee farmers make informed decisions about when to sell their coffee harvest. The app provides personalized recommendations based on historical price data, weather patterns, and the farmer's individual sales history.
-
-### Problem Statement
-
-Small and medium-scale coffee farmers in Colombia's coffee-growing regions (Antioquia, Caldas, Quindío) face significant uncertainty when deciding the optimal time to sell their harvest. Without access to predictive analytics or market insights, they often sell at suboptimal prices, directly impacting their families' economic stability.
-
-### Solution
-
-An intelligent mobile application that:
-- Aggregates historical coffee price data from the Colombian Coffee Growers Federation (FNC)
-- Provides AI-powered analysis through conversational interface
-- Allows farmers to track their personal sales history
-- Delivers personalized recommendations based on individual context
+[![React Native](https://img.shields.io/badge/React%20Native-0.81-blue.svg)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-54-black.svg)](https://expo.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-green.svg)](https://supabase.com/)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-orange.svg)](https://ai.google.dev/)
 
 ---
 
-## 🎯 Project Goals
+## 📋 Tabla de Contenidos
 
-### Primary Objectives
-1. **Provide actionable insights**: Help farmers understand current market trends
-2. **Personalized recommendations**: Context-aware advice based on user's history
-3. **Accessibility**: Simple, intuitive interface for non-technical users
-4. **Real-world impact**: Improve income stability for small coffee producers
-
-### Success Metrics
-- Functional MVP with core features operational
-- AI responses that are contextually relevant and personalized
-- Clean, intuitive UI/UX suitable for target demographic
-- Complete documentation and demo-ready presentation
-
----
-
-## 🏗️ Technical Architecture
-
-### High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                 PRESENTATION LAYER                      │
-│            React Native + Expo + NativeWind             │
-│                                                         │
-│  - Authentication Screens                               │
-│  - Dashboard (Price Display)                            │
-│  - AI Analysis Chat Interface                           │
-│  - Personal Sales Diary (CRUD)                          │
-└────────────────────────┬────────────────────────────────┘
-                         │
-                         │ HTTPS / REST API
-                         │
-┌────────────────────────┴────────────────────────────────┐
-│                   BACKEND LAYER                         │
-│            Supabase (BaaS Platform)                     │
-│                                                         │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │ PostgreSQL Database                             │   │
-│  │  - historical_prices                            │   │
-│  │  - farmer_profiles                              │   │
-│  │  - sales_notes                                  │   │
-│  │  - auth.users (built-in)                        │   │
-│  └─────────────────────────────────────────────────┘   │
-│                                                         │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │ Authentication Service                          │   │
-│  │  - Email/Password                               │   │
-│  │  - Google OAuth (optional)                      │   │
-│  │  - Apple Sign In (optional)                     │   │
-│  └─────────────────────────────────────────────────┘   │
-│                                                         │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │ Edge Functions (Serverless - Deno)             │   │
-│  │  - analizar-contexto: AI analysis orchestrator  │   │
-│  │  - get-precio-actual: Latest price fetch        │   │
-│  └─────────────────────────────────────────────────┘   │
-│                                                         │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │ Row Level Security (RLS)                        │   │
-│  │  - User data isolation                          │   │
-│  │  - Public read for historical prices            │   │
-│  └─────────────────────────────────────────────────┘   │
-└────────────────────────┬────────────────────────────────┘
-                         │
-                         │ HTTPS
-                         │
-┌────────────────────────┴────────────────────────────────┐
-│                   AI LAYER                              │
-│              OpenAI API / Claude API                    │
-│                                                         │
-│  Model: gpt-4o-mini (cost-effective for MVP)           │
-│                                                         │
-│  Input: System Prompt + Personalized Context           │
-│  Output: Contextual Analysis & Recommendations         │
-└─────────────────────────────────────────────────────────┘
-```
+- [Descripción del Proyecto](#-descripción-del-proyecto)
+- [Características Principales](#-características-principales)
+- [Tecnologías Utilizadas](#️-tecnologías-utilizadas)
+- [Arquitectura del Sistema](#-arquitectura-del-sistema)
+- [Requisitos Previos](#-requisitos-previos)
+- [Instalación y Configuración](#-instalación-y-configuración)
+- [Variables de Entorno](#-variables-de-entorno)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Base de Datos](#️-base-de-datos)
+- [Despliegue](#-despliegue)
+- [Contribuir](#-contribuir)
+- [Licencia](#-licencia)
 
 ---
 
-## 🛠️ Technology Stack
+## 🌟 Descripción del Proyecto
+
+**Cosecha Próspera** es una aplicación móvil diseñada para pequeños y medianos caficultores de Colombia (especialmente en regiones como Antioquia, Caldas y Quindío). La app utiliza inteligencia artificial para analizar datos históricos de precios del café y proporcionar recomendaciones personalizadas sobre el momento óptimo de venta.
+
+### Problema que Resuelve
+
+Los caficultores enfrentan incertidumbre al decidir cuándo vender su cosecha debido a:
+- Falta de información predictiva sobre variaciones de precios
+- Ausencia de herramientas analíticas accesibles
+- Presión financiera que obliga a vender prematuramente
+- Pérdida de oportunidades en momentos de precios favorables
+
+### Solución
+
+Una aplicación móvil intuitiva que:
+- ✅ Muestra precios actuales e históricos del café
+- ✅ Proporciona análisis con IA basado en el contexto personal del usuario
+- ✅ Permite llevar un diario de ventas personalizado
+- ✅ Ofrece recomendaciones específicas y accionables
+
+---
+
+## 🚀 Características Principales
+
+### 1. 🔐 Sistema de Autenticación
+- Registro e inicio de sesión con email/contraseña
+- Autenticación segura mediante Supabase Auth
+- Persistencia de sesión
+
+### 2. 📊 Dashboard de Precios
+- Visualización del precio actual de la FNC (Federación Nacional de Cafeteros)
+- Indicadores de tendencia
+- Gráficos de evolución de precios
+
+### 3. 🤖 Asesor IA con Contexto Personalizado
+- Chat conversacional con inteligencia artificial
+- Análisis basado en:
+  - Datos históricos de precios
+  - Perfil del caficultor (región, hectáreas, variedad)
+  - Historial personal de ventas
+- Recomendaciones específicas y razonadas
+- Respuestas en español
+
+### 4. 📝 Diario de Ventas
+- Registrar ventas: fecha, monto total, kilogramos vendidos
+- Visualizar historial completo
+- Estadísticas personales
+
+---
+
+## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
-- **Framework**: React Native 0.74+
-- **Build Tool**: Expo 51+
-- **Styling**: NativeWind (Tailwind CSS for React Native)
-- **Navigation**: React Navigation 6.x
-- **State Management**: React Hooks (useState, useEffect, useContext)
-- **Language**: TypeScript
-
-**Rationale**: React Native provides cross-platform development (iOS/Android) with a single codebase. Expo simplifies development workflow with hot reloading and easy testing.
+- **React Native 0.81+** - Framework multiplataforma
+- **Expo 54+** - Herramientas de desarrollo y build
+- **Expo Router 6+** - Navegación basada en archivos
+- **TypeScript** - Tipado estático
+- **React Native Reanimated** - Animaciones fluidas
+- **AsyncStorage** - Almacenamiento local
 
 ### Backend (BaaS)
-- **Platform**: Supabase
-- **Database**: PostgreSQL 15+
-- **Serverless Functions**: Deno (Edge Functions)
-- **Authentication**: Supabase Auth
-- **Real-time**: Supabase Realtime (optional for future features)
+- **Supabase** - Backend as a Service
+  - PostgreSQL 15+ (Base de datos)
+  - Supabase Auth (Autenticación)
+  - Edge Functions (Serverless con Deno)
+  - Row Level Security (Seguridad de datos)
 
-**Rationale**: Supabase provides a complete backend solution with minimal setup, eliminating the need for custom server infrastructure.
-
-### AI Integration
-- **Primary**: OpenAI API (gpt-4o-mini)
-- **Alternative**: Claude 3.5 Sonnet (Anthropic API)
-- **Pattern**: Retrieval-Augmented Generation (RAG) - lite version
-
-**Rationale**: Using pre-trained LLMs with prompt engineering is faster and more cost-effective than training custom models for an MVP. The RAG pattern ensures responses are grounded in actual user data.
-
-### Data Storage
-- **Structured Data**: PostgreSQL (via Supabase)
-- **Local Cache**: AsyncStorage (React Native)
-- **File Storage**: Supabase Storage (if needed for future features)
+### Inteligencia Artificial
+- **Google Gemini 2.5 Flash** - Modelo de lenguaje
+- **Patrón RAG** (Retrieval-Augmented Generation)
+- Prompt engineering para respuestas personalizadas
 
 ---
 
-## 📊 Database Schema
+## 🏗️ Arquitectura del Sistema
 
-### Tables Structure
+![Arquitectura del Sistema](docs/architecture-diagram.png)
 
-#### `historical_prices` (Historical Prices)
+### Flujos de Datos
+
+#### Análisis de Mercado con IA
+![Flujo de Análisis de Mercado](docs/analyze-coffee-market-diagram-flow.png)
+
+#### Obtención de Precios FNC
+![Flujo de Precios FNC](docs/get-colombian-coffee-federation-prices-diagram-flow.png)
+
+#### Guardado de Perfil
+![Flujo de Perfil](docs/save-farmer-profile-diagram-flow.png)
+
+---
+
+## 📦 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+- **Node.js 18+** - [Descargar aquí](https://nodejs.org/)
+- **npm** o **yarn** - Viene con Node.js
+- **Git** - [Descargar aquí](https://git-scm.com/)
+- **Expo CLI** - Se instalará en el proceso
+- **Expo Go** (app móvil) - Para probar en dispositivo físico
+  - [iOS](https://apps.apple.com/app/expo-go/id982107779)
+  - [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)
+
+### Cuentas Necesarias
+
+1. **Cuenta de Supabase** (gratuita)
+   - 📖 [Tutorial: Cómo crear cuenta en Supabase](https://supabase.com/docs/guides/getting-started)
+   
+2. **Cuenta de Google AI Studio** (gratuita)
+   - 📖 [Tutorial: Cómo obtener API Key de Gemini](https://ai.google.dev/gemini-api/docs/api-key)
+
+---
+
+## 🔧 Instalación y Configuración
+
+### Paso 1: Clonar el Repositorio
+
+```bash
+git clone https://github.com/tu-usuario/cosecha-prospera.git
+cd cosecha-prospera
+```
+
+### Paso 2: Instalar Dependencias
+
+```bash
+npm install
+# o si usas yarn:
+yarn install
+```
+
+### Paso 3: Configurar Supabase
+
+#### 3.1 Crear Proyecto en Supabase
+
+1. Ve a [https://supabase.com/dashboard](https://supabase.com/dashboard)
+2. Click en **"New Project"**
+3. Completa los datos:
+   - **Name**: `cosecha-prospera`
+   - **Database Password**: Guarda esta contraseña
+   - **Region**: South America (São Paulo)
+   - **Pricing Plan**: Free
+4. Espera 2-3 minutos mientras se crea el proyecto
+
+#### 3.2 Obtener Credenciales
+
+1. En tu proyecto de Supabase, ve a **Settings → API**
+2. Copia estos valores:
+   - **Project URL**: `https://xxxxx.supabase.co`
+   - **anon/public key**: `eyJhbGc...` (es una clave larga)
+
+#### 3.3 Crear las Tablas
+
+1. Ve a **SQL Editor** en el dashboard de Supabase
+2. Click en **"New Query"**
+3. Copia y pega el contenido del archivo `supabase/db/schema.sql`:
+
 ```sql
-CREATE TABLE historical_prices (
-  id SERIAL PRIMARY KEY,
-  date DATE NOT NULL UNIQUE,
-  fnc_price DECIMAL(12,2) NOT NULL,  -- Price per 125kg load
-  ny_price DECIMAL(10,4),             -- NY Stock Exchange price
-  created_at TIMESTAMP DEFAULT NOW()
+-- 1. Historical Prices Table
+create table public.historical_prices (
+  id bigint generated by default as identity primary key,
+  date date not null unique,
+  fnc_price decimal(12,2) not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
-```
 
-**Purpose**: Store historical coffee prices from FNC and international markets.
+alter table public.historical_prices enable row level security;
 
-**Access**: Public read (authenticated users), Admin write
+create policy "Public read access for historical prices"
+  on public.historical_prices for select
+  using ( auth.role() = 'authenticated' );
 
-**Data Source**: Manual entry or web scraping from FNC website
-
----
-
-#### `farmer_profiles` (Farmer Profile)
-```sql
-CREATE TABLE farmer_profiles (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  region TEXT,                         -- e.g., "Quindío", "Caldas"
-  hectares DECIMAL(5,2),               -- Farm size in hectares
-  coffee_variety TEXT,                 -- Coffee variety (optional)
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- 2. Farmer Profiles Table
+create table public.farmer_profiles (
+  user_id uuid references auth.users(id) on delete cascade primary key,
+  region text,
+  hectares decimal(5,2),
+  coffee_variety text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
-```
 
-**Purpose**: Store contextual information about the farmer for personalized AI responses.
+alter table public.farmer_profiles enable row level security;
 
-**Access**: User can only read/write their own profile (RLS enforced)
+create policy "Users can view own profile"
+  on public.farmer_profiles for select
+  using ( auth.uid() = user_id );
 
-**Usage**: Injected into AI prompts to provide personalized recommendations
+create policy "Users can update own profile"
+  on public.farmer_profiles for update
+  using ( auth.uid() = user_id );
 
----
+create policy "Users can insert own profile"
+  on public.farmer_profiles for insert
+  with check ( auth.uid() = user_id );
 
-#### `sales_notes` (Sales Diary)
-```sql
-CREATE TABLE sales_notes (
-  id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  date DATE NOT NULL,
-  price DECIMAL(12,2) NOT NULL,        -- Price per load
-  loads_quantity INTEGER NOT NULL,     -- Number of loads sold
-  notes TEXT,                          -- Optional user notes
-  created_at TIMESTAMP DEFAULT NOW()
+-- 3. Sales Notes Table
+create table public.sales_notes (
+  id bigint generated by default as identity primary key,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  date date not null,
+  total_amount decimal(12,2) not null,
+  kilograms_sold decimal(10,2) not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+alter table public.sales_notes enable row level security;
+
+create policy "Users can view own sales notes"
+  on public.sales_notes for select
+  using ( auth.uid() = user_id );
+
+create policy "Users can insert own sales notes"
+  on public.sales_notes for insert
+  with check ( auth.uid() = user_id );
+
+create policy "Users can update own sales notes"
+  on public.sales_notes for update
+  using ( auth.uid() = user_id );
+
+create policy "Users can delete own sales notes"
+  on public.sales_notes for delete
+  using ( auth.uid() = user_id );
 ```
 
-**Purpose**: Allow farmers to track their personal sales history.
+4. Click en **"Run"** para ejecutar el script
 
-**Access**: User can only access their own notes (RLS enforced)
+#### 3.4 Desplegar Edge Functions
 
-**Usage**: 
-- Historical reference for the user
-- Context for AI to compare current prices with user's past sales
+1. Instala Supabase CLI si no lo tienes.
+2. Login en Supabase CLI:
+   ```bash
+   supabase login
+   ```
+3. Linkea tu proyecto local con el remoto:
+   ```bash
+   supabase link --project-ref tu-project-ref
+   ```
+4. Configura los secretos (API Key de Gemini):
+   ```bash
+   supabase secrets set GEMINI_API_KEY=tu_api_key_de_gemini
+   ```
+5. Despliega las funciones:
+   ```bash
+   supabase functions deploy analyze-coffee-market
+   supabase functions deploy get-colombian-coffee-federation-prices
+   supabase functions deploy save-farmer-profile
+   ```
+
+### Paso 4: Configurar Google Gemini
+
+1. Ve a [https://aistudio.google.com/](https://aistudio.google.com/)
+2. Inicia sesión con tu cuenta de Google
+3. Click en **"Get API Key"**
+4. Click en **"Create API Key"**
+5. Copia la clave y úsala en el paso anterior (Supabase Secrets).
 
 ---
 
-## 🎨 Application Features & Scope
+## 🔑 Variables de Entorno
 
-### Feature 1: Authentication System
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
-**Scope**: User registration and login
-
-**User Stories**:
-- As a farmer, I want to create an account with my email so I can access personalized features
-- As a user, I want to log in securely so my data remains private
-- As a user, I want to stay logged in so I don't have to authenticate every time
-
-**Implementation Details**:
-```
-Screens:
-├── LoginScreen
-│   ├── Email input
-│   ├── Password input
-│   ├── "Login" button
-│   ├── "Create Account" toggle
-│   └── Error handling
-└── (Future) OAuth options (Google, Apple)
-
-Technical Requirements:
-- Supabase Auth integration
-- Secure token storage (AsyncStorage)
-- Auto-refresh tokens
-- Session persistence
-- Input validation (email format, password strength)
-
-Edge Cases:
-- Network failure during login
-- Invalid credentials
-- Expired session
-- First-time user onboarding
+```properties
+# Supabase Configuration
+EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
 ```
 
-**Out of Scope for MVP**:
-- Password reset functionality
-- Social login (Google/Apple)
-- Multi-factor authentication
-- Profile picture upload
+> **Nota**: La `GEMINI_API_KEY` se maneja del lado del servidor (Supabase Edge Functions) por seguridad y no debe estar en el cliente.
 
 ---
 
-### Feature 2: Dashboard (Price Display)
+## 📁 Estructura del Proyecto
 
-**Scope**: Display current coffee prices and market information
-
-**User Stories**:
-- As a farmer, I want to see the current FNC reference price immediately upon login
-- As a user, I want to see the NY stock exchange price to understand international trends
-- As a user, I want to quickly access the AI analysis feature from the dashboard
-
-**Implementation Details**:
 ```
-Components:
-├── DashboardScreen
-│   ├── Header (App branding)
-│   ├── PriceCard Component
-│   │   ├── Current FNC price (large, prominent)
-│   │   ├── Price change indicator (+/- percentage)
-│   │   ├── Last update timestamp
-│   │   └── NY exchange price (secondary info)
-│   ├── "Analyze with AI" CTA button
-│   ├── "My Sales Diary" navigation button
-│   └── Pull-to-refresh functionality
-
-Data Flow:
-1. Component mounts → fetch latest price from Supabase
-2. Query: SELECT * FROM historical_prices ORDER BY date DESC LIMIT 1
-3. Calculate percentage change vs. previous day/week
-4. Display in card with appropriate styling (green for up, red for down)
-5. Cache data locally for offline viewing
-
-UI/UX Guidelines:
-- Price should be the focal point (large font, bold)
-- Use color psychology (green = favorable, red = caution)
-- Include context (date, comparison to average)
-- Fast loading (< 2 seconds)
-- Graceful degradation if data unavailable
-```
-
-**Out of Scope for MVP**:
-- Price history chart/graph
-- Multiple price types (washed vs. natural)
-- Regional price variations
-- Push notifications for price changes
-- Predictive price modeling
-
----
-
-### Feature 3: AI-Powered Analysis Chat
-
-**Scope**: Conversational interface for personalized recommendations
-
-**User Stories**:
-- As a farmer, I want to ask "Should I sell now?" and receive a personalized answer
-- As a user, I want the AI to consider my previous sales when making recommendations
-- As a user, I want to understand the reasoning behind the AI's suggestion
-
-**Implementation Details**:
-```
-Components:
-├── AnalysisScreen
-│   ├── Chat UI
-│   │   ├── Message list (scrollable)
-│   │   ├── User messages (right-aligned, blue)
-│   │   ├── AI messages (left-aligned, white)
-│   │   └── Loading indicator
-│   ├── Input field
-│   │   ├── Text input (multiline)
-│   │   ├── Send button
-│   │   └── Character limit indicator
-│   └── Quick question buttons (optional)
-│       ├── "Should I sell now?"
-│       ├── "Analyze current price"
-│       └── "What's the trend?"
-
-Architecture Flow:
-1. User types question → sends to Edge Function
-2. Edge Function:
-   a. Authenticates user
-   b. Fetches context from database:
-      - Last 12 months of price data
-      - User's profile (region, farm size)
-      - User's last 5 sales
-   c. Constructs personalized prompt
-   d. Calls OpenAI API with context
-   e. Returns AI response
-3. Display formatted response in chat
-
-Prompt Engineering:
-System Prompt:
-"You are an expert advisor for Colombian coffee farmers. Analyze historical 
-price data and provide personalized recommendations. Be specific with numbers, 
-percentages, and clear action items. Use emojis for visual clarity. 
-Format: Trend Analysis → Personal Context → Recommendation → Considerations"
-
-Context Injection:
-- Historical prices: "[Nov 2025: $1,890,000, Oct 2025: $1,850,000...]"
-- User profile: "Farmer in Quindío with 5 hectares"
-- User history: "Last sold in February at $1,750,000"
-- Current price: "$1,890,000"
-- Question: "{user_input}"
-
-Response Format (AI generates):
-📈 Current Trend: [analysis]
-💰 Personal Context: [comparison to user's history]
-✅ Recommendation: [clear action item]
-⚠️ Considerations: [risks, external factors]
-
-Technical Requirements:
-- Token limit management (max 600 tokens output)
-- Streaming responses (optional, for better UX)
-- Error handling (API failures, rate limits)
-- Message persistence (optional, store in DB)
-- Cost monitoring (track API usage)
-```
-
-**Out of Scope for MVP**:
-- Voice input/output
-- Image analysis (coffee quality assessment)
-- Multi-turn conversation memory (stateless per query)
-- Multiple AI models comparison
-- Real-time price alerts
-- Shareable reports
-
----
-
-### Feature 4: Personal Sales Diary (CRUD)
-
-**Scope**: Allow users to record and view their sales history
-
-**User Stories**:
-- As a farmer, I want to record each sale (date, price, quantity) so I can track my performance
-- As a user, I want to add notes about each sale (e.g., quality, buyer)
-- As a user, I want to view my sales history to identify patterns
-- As a user, I want to edit or delete entries if I made a mistake
-
-**Implementation Details**:
-```
-Components:
-├── DiaryScreen
-│   ├── Header with "Add New Sale" button
-│   ├── Sales list (FlatList)
-│   │   ├── Individual sale cards
-│   │   │   ├── Date (prominent)
-│   │   │   ├── Price per load
-│   │   │   ├── Quantity (number of loads)
-│   │   │   ├── Total amount (calculated)
-│   │   │   ├── Optional notes
-│   │   │   └── Edit/Delete actions
-│   │   └── Empty state (if no sales recorded)
-│   └── Add/Edit Modal
-│       ├── Date picker
-│       ├── Price input (numeric)
-│       ├── Quantity input (numeric)
-│       ├── Notes input (multiline text)
-│       ├── Save button
-│       └── Cancel button
-
-CRUD Operations:
-
-CREATE:
-- Form: date, price, loads_quantity, notes
-- Validation: required fields (date, price, quantity)
-- SQL: INSERT INTO sales_notes (user_id, date, price, loads_quantity, notes)
-- UI feedback: Success toast, close modal, refresh list
-
-READ:
-- SQL: SELECT * FROM sales_notes WHERE user_id = {user_id} ORDER BY date DESC
-- Display: Most recent sales first
-- Performance: Pagination if > 50 entries (future)
-
-UPDATE:
-- Open modal with pre-filled data
-- Allow editing all fields
-- SQL: UPDATE sales_notes SET ... WHERE id = {id} AND user_id = {user_id}
-- UI feedback: Success message
-
-DELETE:
-- Confirmation dialog ("Are you sure?")
-- SQL: DELETE FROM sales_notes WHERE id = {id} AND user_id = {user_id}
-- UI feedback: Success toast, remove from list
-
-Calculations:
-- Total per sale = price * loads_quantity
-- Average price across all sales
-- Total revenue to date
-
-UI/UX Guidelines:
-- Quick add (minimal taps to record a sale)
-- Visual timeline (newest at top)
-- Color coding (higher prices in green, lower in red vs. average)
-- Swipe actions for quick edit/delete (future enhancement)
-```
-
-**Out of Scope for MVP**:
-- Export to CSV/PDF
-- Advanced filtering (by date range, price range)
-- Sales statistics dashboard
-- Photo attachments (coffee samples)
-- Multiple buyers tracking
-- Integration with accounting software
-
----
-
-## 🔐 Security & Data Privacy
-
-### Authentication & Authorization
-- **JWT Tokens**: Issued by Supabase Auth, stored securely in AsyncStorage
-- **Row Level Security (RLS)**: PostgreSQL policies ensure users only access their own data
-- **API Key Protection**: OpenAI key stored as Supabase secret (never exposed to client)
-
-### Data Protection
-```sql
--- RLS Policies Example
-CREATE POLICY "Users view own profile"
-  ON farmer_profiles FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users insert own notes"
-  ON sales_notes FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-```
-
-### Best Practices
-- HTTPS only communication
-- Input validation on client and server
-- SQL injection prevention (parameterized queries via Supabase client)
-- Rate limiting on Edge Functions
-- No sensitive data in logs
-
----
-
-## 🚀 Deployment & Infrastructure
-
-### Frontend Deployment
-```
-Development:
-- Local testing: Expo Go app on physical device
-- Hot reload for rapid iteration
-
-Production:
-- Option 1: Expo EAS Build (managed builds)
-  - Build iOS IPA
-  - Build Android APK/AAB
-  - Submit to App Store / Play Store
-
-- Option 2: Web export (demo purposes)
-  - expo export:web
-  - Host on Vercel/Netlify
-```
-
-### Backend Infrastructure
-```
-Supabase Project:
-- Hosted PostgreSQL (Free tier: 500MB)
-- Edge Functions (Free tier: 500K invocations/month)
-- Auth (Free tier: 50K MAU)
-- Region: South America (São Paulo) for lower latency
-
-Environment Variables:
-- SUPABASE_URL (public)
-- SUPABASE_ANON_KEY (public, but with RLS protection)
-- OPENAI_API_KEY (secret, server-side only)
-```
-
-### CI/CD (Future Enhancement)
-```
-- GitHub Actions for automated testing
-- Automated EAS builds on git push
-- Preview deployments for PR reviews
+cosecha-prospera/
+├── app/                         # Expo Router (Rutas y Navegación)
+│   ├── (tabs)/                  # Navegación principal
+│   ├── auth/                    # Pantallas de autenticación
+│   ├── ai-analysis/             # Pantalla de análisis
+│   ├── profile/                 # Pantalla de perfil
+│   ├── sales-diary/             # Pantalla de diario
+│   └── _layout.tsx              # Configuración raíz
+├── components/                  # Componentes UI reutilizables
+├── features/                    # Lógica de negocio
+│   ├── ai-analysis/             # Lógica de IA
+│   ├── auth/                    # Lógica de Auth
+│   ├── dashboard/               # Lógica de Dashboard
+│   ├── profile/                 # Lógica de Perfil
+│   └── sales-diary/             # Lógica de Diario
+├── supabase/                    # Backend
+│   ├── db/                      # Esquemas SQL
+│   └── functions/               # Edge Functions (Deno)
+│       ├── analyze-coffee-market/
+│       ├── get-colombian-coffee-federation-prices/
+│       └── save-farmer-profile/
+└── ...
 ```
 
 ---
 
-## 💰 Cost Analysis
+## 🗄️ Base de Datos
 
-### MVP Phase (3 months, 100 active users)
-```
-Supabase Free Tier:
-✅ Database: 500MB (sufficient)
-✅ Edge Functions: 500K invocations (sufficient)
-✅ Auth: 50K MAU (sufficient)
-Cost: $0/month
+### Diagrama de Relaciones
 
-OpenAI API (gpt-4o-mini):
-Pricing:
-- Input: $0.15 per 1M tokens
-- Output: $0.60 per 1M tokens
+![Diagrama de Relaciones](docs/entity-relationship-diagram.png)
 
-Estimated Usage (100 users, 5 queries/user/month = 500 queries):
-- Average input: 800 tokens (context + question)
-- Average output: 400 tokens
-- Monthly tokens: 500 × (800 + 400) = 600K tokens
-- Cost: (400K × $0.15 + 200K × $0.60) / 1M = ~$0.18/month
+---
 
-Total MVP Cost: < $1/month
+## 🚀 Ejecutar el Proyecto
+
+### Modo Desarrollo
+
+```bash
+# Iniciar el servidor de Expo
+npm start
+
+# O específicamente para cada plataforma:
+npm run android   # Para Android
+npm run ios       # Para iOS (solo en macOS)
+npm run web       # Para navegador web
 ```
 
-### Scaling Projections
-```
-1,000 users:
-- Supabase: Upgrade to Pro ($25/month)
-- OpenAI: ~$20/month
-Total: ~$45/month
+### Probar en Dispositivo Físico
 
-10,000 users:
-- Supabase: Pro + add-ons ($50/month)
-- OpenAI: ~$200/month
-Total: ~$250/month
+1. Instala **Expo Go** en tu celular
+   - [iOS App Store](https://apps.apple.com/app/expo-go/id982107779)
+   - [Android Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
+
+2. Ejecuta `npm start`
+
+3. Escanea el QR code:
+   - **iOS**: Usa la cámara del iPhone
+   - **Android**: Usa la app Expo Go
+
+---
+
+## 🧪 Testing
+
+```bash
+# Ejecutar tests
+npm test
 ```
 
 ---
 
-## 📈 Development Roadmap
+## 🤝 Contribuir
 
-### Phase 1: MVP (Current - Week 1-2)
-- ✅ Authentication system
-- ✅ Dashboard with price display
-- ✅ AI analysis chat
-- ✅ Sales diary CRUD
-- ✅ Basic responsive design
+Las contribuciones son bienvenidas. Por favor:
 
-### Phase 2: Enhancement (Post-MVP)
-- [ ] Price history charts
-- [ ] Push notifications for price alerts
-- [ ] Offline mode with data sync
-- [ ] Social login (Google, Apple)
-- [ ] Multi-language support (Spanish focus)
-
-### Phase 3: Advanced Features
-- [ ] Weather data integration
-- [ ] Cooperative/community features
-- [ ] Export reports (PDF)
-- [ ] Advanced analytics dashboard
-- [ ] Integration with FNC official APIs (if available)
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
 ---
 
-## 🧪 Testing Strategy
+## 📄 Licencia
 
-### Unit Testing
-```
-Libraries: Jest + React Native Testing Library
-
-Test Coverage:
-- Utility functions (date formatting, price calculations)
-- Custom hooks (useAuth, useSupabase)
-- Component logic (form validation, data transformation)
-
-Target: 70%+ coverage for business logic
-```
-
-### Integration Testing
-```
-Test Scenarios:
-1. Auth flow: Register → Login → Logout
-2. Data flow: Fetch prices → Display → Refresh
-3. AI flow: Send question → Receive response → Display
-4. CRUD flow: Create note → Read → Update → Delete
-
-Tools: Detox (E2E) or manual testing for MVP
-```
-
-### Manual Testing Checklist
-```
-□ New user registration
-□ Existing user login
-□ Dashboard loads with correct prices
-□ AI chat responds appropriately
-□ Create sales note
-□ Edit sales note
-□ Delete sales note
-□ App works offline (cached data)
-□ App syncs when back online
-□ Logout and session cleanup
-```
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 ---
 
-## 📖 API Documentation
+## 👥 Autores
 
-### Supabase Edge Function: `analyze-context`
-
-**Endpoint**: `POST /functions/v1/analyze-context`
-
-**Authentication**: Required (Bearer token in Authorization header)
-
-**Request Body**:
-```json
-{
-  "question": "Should I sell my coffee now?"
-}
-```
-
-**Response** (Success - 200):
-```json
-{
-  "analysis": "📈 Current Trend...",
-  "current_price": 1890000,
-  "average_12m": 1820000
-}
-```
-
-**Response** (Error - 400):
-```json
-{
-  "error": "Error message describing the issue"
-}
-```
-
-**Process Flow**:
-1. Validate authorization token
-2. Extract user ID from token
-3. Query database for context:
-   - Historical prices (12 months)
-   - User profile
-   - User's sales history (last 5)
-4. Build personalized context string
-5. Call OpenAI API with system prompt + context
-6. Return formatted response
-
-**Rate Limiting**: 60 requests per minute per user (future implementation)
+- **Carlos Andrés Cardona Quintero** - Desarrollo Full Stack
+- **Mateo Valencia Minota** - Desarrollo Full Stack
 
 ---
 
-## 🎓 Learning Outcomes
+## 🙏 Agradecimientos
 
-This project demonstrates proficiency in:
-
-### Technical Skills
-- **Full-stack development**: React Native frontend + Supabase backend
-- **AI integration**: Prompt engineering, RAG patterns, API integration
-- **Database design**: PostgreSQL schema, RLS policies
-- **Serverless architecture**: Edge Functions, BaaS platforms
-- **Authentication**: Secure user management, token handling
-
-### Soft Skills
-- **Problem definition**: Identifying real-world pain points
-- **Scope management**: Defining MVP vs. future features
-- **Documentation**: Technical writing, architecture diagrams
-- **User-centric design**: Focusing on target audience needs
-
-### AI/ML Concepts
-- **Retrieval-Augmented Generation (RAG)**: Context injection for personalized responses
-- **Prompt engineering**: Crafting effective system prompts
-- **LLM limitations**: Understanding when NOT to use AI
-- **Ethical considerations**: Data privacy, bias awareness, transparency
-
----
-
-## 🚨 Known Limitations & Future Improvements
-
-### Current Limitations
-1. **Data Source**: Manual price entry (FNC has no public API)
-   - **Mitigation**: Web scraping or manual daily updates
-   - **Future**: Partnership with FNC for API access
-
-2. **Prediction Accuracy**: AI provides trends, not precise predictions
-   - **Mitigation**: Clear disclaimers, educational context
-   - **Future**: Integrate statistical models (Prophet, ARIMA)
-
-3. **Offline Functionality**: Limited (read-only cached data)
-   - **Mitigation**: Core features work with cached data
-   - **Future**: Full offline mode with queue-based sync
-
-4. **Scalability**: Single-region deployment
-   - **Mitigation**: Sufficient for MVP and Colombian market
-   - **Future**: Multi-region deployment, CDN for assets
-
-### Ethical Considerations
-- **Transparency**: AI recommendations include reasoning and limitations
-- **Responsibility**: Clear disclaimer that AI is advisory, not guaranteed
-- **Accessibility**: Simple language, avoid technical jargon
-- **Bias Awareness**: Ensure recommendations don't favor large producers
-
----
-
-## 📞 Support & Maintenance
-
-### User Support (Post-Launch)
-- In-app FAQ section
-- Email support: support@cosechapropera.app
-- WhatsApp community (common in rural Colombia)
-
-### Maintenance Plan
-- Weekly price data updates
-- Monthly OpenAI API cost monitoring
-- Quarterly user feedback surveys
-- Biannual feature releases
-
----
-
-## 📝 Conclusion
-
-Cosecha Próspera represents a practical application of AI technology to solve a real-world problem affecting Colombian coffee farmers. By combining modern mobile development practices with generative AI, the app delivers personalized insights that were previously inaccessible to small producers.
-
-The project's success lies not in technological complexity, but in thoughtful scope definition, user-centric design, and pragmatic implementation choices. It demonstrates that impactful AI applications don't require custom models or massive datasets—effective prompt engineering and context injection can deliver significant value with existing tools.
-
-**Key Takeaways**:
-- Solve real problems, don't chase technology trends
-- MVP scope discipline enables faster delivery
-- Generative AI shines when augmented with user context
-- Simple UX is critical for non-technical users
-- Ethical considerations should guide every design decision
-
----
-
-## 📚 References & Resources
-
-### Official Documentation
-- [React Native Docs](https://reactnative.dev/docs/getting-started)
-- [Expo Documentation](https://docs.expo.dev/)
-- [Supabase Guides](https://supabase.com/docs)
-- [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
-- [NativeWind Setup](https://www.nativewind.dev/)
-
-### Domain-Specific Resources
-- [Colombian Coffee Growers Federation](https://www.federaciondecafeteros.org/)
-- [International Coffee Organization](https://www.ico.org/)
-- Coffee price trends and analysis resources
-
-### Development Tools
-- [Expo Snack](https://snack.expo.dev/) - Online React Native playground
-- [Supabase Studio](https://supabase.com/docs/guides/platform) - Database management
-- [OpenAI Playground](https://platform.openai.com/playground) - Prompt testing
-
----
-
-**Document Version**: 1.0  
-**Last Updated**: November 29, 2025  
-**Author**: Project Development Team  
-**Status**: MVP Documentation Complete
+- Federación Nacional de Cafeteros de Colombia (FNC) por los datos de precios
+- Comunidad de caficultores de Antioquia, Caldas y Quindío
