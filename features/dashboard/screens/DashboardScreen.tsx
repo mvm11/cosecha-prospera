@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Button, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { supabase } from '../../../core/supabase';
@@ -6,6 +7,7 @@ import PriceCard from '../components/PriceCard';
 import { useLatestPrice } from '../hooks/useLatestPrice';
 
 export default function DashboardScreen() {
+    const router = useRouter();
     const { user, session } = useAuth();
     const { price, loading, error, refetch } = useLatestPrice();
     const [refreshing, setRefreshing] = useState(false);
@@ -18,6 +20,10 @@ export default function DashboardScreen() {
         Alert.alert('Coming Soon', 'AI Analysis will be available in the next update!');
     };
 
+    const handleNavigateToSalesDiary = () => {
+        router.push('/sales-diary');
+    };
+
     const handleRefreshPrices = async () => {
         if (!session) {
             Alert.alert('Error', 'You must be logged in to refresh prices');
@@ -27,7 +33,7 @@ export default function DashboardScreen() {
         setRefreshing(true);
         try {
             const response = await fetch(
-                `${process.env.EXPO_PUBLIC_SUPABASE_URL}/functions/v1/fetch-prices`,
+                `${process.env.EXPO_PUBLIC_SUPABASE_URL}/functions/v1/get-colombian-coffee-federation-prices`,
                 {
                     method: 'POST',
                     headers: {
@@ -88,7 +94,7 @@ export default function DashboardScreen() {
                 <View style={{ height: 10 }} />
                 <Button title="Analyze with AI" onPress={handleAnalyze} color="#2980b9" />
                 <View style={{ height: 10 }} />
-                <Button title="My Sales Diary" onPress={() => { }} color="#8e44ad" />
+                <Button title="My Sales Diary" onPress={handleNavigateToSalesDiary} color="#8e44ad" />
             </View>
         </ScrollView>
     );
