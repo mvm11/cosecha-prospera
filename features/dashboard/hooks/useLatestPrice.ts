@@ -26,7 +26,12 @@ export function useLatestPrice() {
                     throw error;
                 }
             } else {
-                setPrice(data);
+                // data may be undefined if no rows returned
+                if (data) {
+                    setPrice(data);
+                } else {
+                    setPrice(null);
+                }
             }
         } catch (err: any) {
             setError(err.message);

@@ -50,7 +50,16 @@ export default function DashboardScreen() {
                 throw new Error(data.error || 'Failed to fetch prices');
             }
 
-            Alert.alert('Success', `Latest price updated: $${data.data.price.toLocaleString('es-CO')} (${data.data.date})`);
+            // Guard against unexpected shape
+            // Edge Function returns { success: true, latestPrice: { date, price }, summary: ... }
+            const priceValue = data?.latestPrice?.price;
+            const priceDate = data?.latestPrice?.date;
+
+            if (priceValue == null || priceDate == null) {
+                throw new Error('Invalid price data received from Edge Function');
+            }
+
+            Alert.alert('Success', `Latest price updated: $${priceValue.toLocaleString('es-CO')} (${priceDate})`);
 
             // Refresh the local data
             await refetch();
@@ -75,7 +84,7 @@ export default function DashboardScreen() {
 
             {error ? (
                 <Text style={styles.error}>Error loading price: {error}</Text>
-            ) : price ? (
+            ) : price != null ? (
                 <PriceCard fncPrice={price.fnc_price} date={price.date} />
             ) : (
                 <View style={styles.emptyState}>
