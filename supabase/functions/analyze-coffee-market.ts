@@ -34,7 +34,6 @@ FORMATO DE RESPUESTA (Obligatorio, máximo 4 puntos):
  * Handles CORS preflight requests
  */
 function handleOptionsRequest() {
-    console.log('🛑 OPTIONS request received — returning CORS headers');
     return new Response('ok', {
         status: 200,
         headers: CORS_HEADERS
@@ -45,12 +44,10 @@ function handleOptionsRequest() {
  * Creates a Supabase client instance
  */
 function createSupabaseClient() {
-    console.log('🔧 Initializing Supabase client...');
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL') ?? '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-    console.log('✅ Supabase client initialized');
     return supabase;
 }
 
@@ -58,10 +55,8 @@ function createSupabaseClient() {
  * Extracts and validates the authorization token
  */
 function extractAuthToken(req: Request) {
-    console.log('🔍 Extracting Authorization token...');
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-        console.error('❌ Authorization header missing');
         throw new Error('Missing Authorization header');
     }
     return authHeader.replace('Bearer ', '');
@@ -71,15 +66,12 @@ function extractAuthToken(req: Request) {
  * Validates the user token and returns the authenticated user
  */
 async function authenticateUser(supabase: any, token: string) {
-    console.log('🔐 Validating user token...');
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
     if (error || !user) {
-        console.error('❌ Invalid token or authentication failed:', error);
         throw new Error('Invalid token');
     }
 
-    console.log(`👤 Authenticated user: ${user.id}`);
     return user;
 }
 
@@ -87,7 +79,6 @@ async function authenticateUser(supabase: any, token: string) {
  * Fetches the farmer's profile
  */
 async function fetchFarmerProfile(supabase: any, userId: string) {
-    console.log('👤 Fetching farmer profile...');
     const { data, error } = await supabase
         .from('farmer_profiles')
         .select('*')
@@ -95,11 +86,9 @@ async function fetchFarmerProfile(supabase: any, userId: string) {
         .single();
 
     if (error) {
-        console.warn('⚠️ Could not fetch profile:', error.message);
         return null;
     }
 
-    console.log('✅ Profile fetched');
     return data;
 }
 
@@ -107,7 +96,6 @@ async function fetchFarmerProfile(supabase: any, userId: string) {
  * Fetches the farmer's recent sales history
  */
 async function fetchSalesHistory(supabase: any, userId: string) {
-    console.log('💰 Fetching sales history...');
     const { data, error } = await supabase
         .from('sales_notes')
         .select('*')
@@ -116,11 +104,9 @@ async function fetchSalesHistory(supabase: any, userId: string) {
         .limit(5);
 
     if (error) {
-        console.warn('⚠️ Could not fetch sales history:', error.message);
         return [];
     }
 
-    console.log(`✅ Fetched ${data.length} sales records`);
     return data;
 }
 
@@ -128,7 +114,6 @@ async function fetchSalesHistory(supabase: any, userId: string) {
  * Fetches historical prices for trend analysis (last 30 days)
  */
 async function fetchHistoricalPrices(supabase: any) {
-    console.log('📈 Fetching historical prices...');
     const { data, error } = await supabase
         .from('historical_prices')
         .select('*')
@@ -136,11 +121,9 @@ async function fetchHistoricalPrices(supabase: any) {
         .limit(30);
 
     if (error) {
-        console.error('❌ Error fetching historical prices:', error.message);
         throw new Error('Could not fetch market data');
     }
 
-    console.log(`✅ Fetched ${data.length} price records`);
     return data;
 }
 
@@ -148,11 +131,9 @@ async function fetchHistoricalPrices(supabase: any) {
 * Calls Google Gemini API to generate the recommendation
 */
 async function callGemini(prompt: string) {
-    console.log('🤖 Calling Google Gemini API...');
     const apiKey = Deno.env.get('GEMINI_API_KEY');
 
     if (!apiKey) {
-        console.error('❌ GEMINI_API_KEY is not set');
         throw new Error('Server configuration error: Missing AI key');
     }
 
@@ -173,13 +154,9 @@ async function callGemini(prompt: string) {
     const data = await response.json();
 
     if (!response.ok) {
-        console.error('❌ Gemini API error:', data);
         throw new Error(`AI Service Error: ${data.error?.message || 'Unknown error'}`);
     }
 
-    console.log('✅ Gemini response received');
-
-    // ⚠️ VERIFICACIÓN MEJORADA ⚠️
     const candidate = data.candidates?.[0];
     const text = candidate?.content?.parts?.[0]?.text;
 
@@ -187,14 +164,10 @@ async function callGemini(prompt: string) {
         return text;
     }
 
-    // Verificar si el contenido fue bloqueado por seguridad
     if (candidate?.finishReason === 'SAFETY') {
-        console.error('❌ Gemini response blocked by safety settings:', candidate.safetyRatings);
         throw new Error('AI content was blocked by safety filters. Try adjusting the prompt.');
     }
 
-    // Verificar otras razones de finalización o formato inesperado
-    console.error('❌ Gemini response did not contain expected text:', JSON.stringify(data, null, 2));
     throw new Error('Invalid or empty response format from Gemini');
 }
 
@@ -241,8 +214,6 @@ async function analyzeMarketHandler(req: Request) {
         .replace('{historial_ventas}', salesStr)
         .replace('{precio_actual}', currentPriceStr);
 
-    console.log('📝 Prompt constructed');
-
     // 4. Call AI
     const recommendation = await callGemini(finalPrompt);
 
@@ -266,8 +237,6 @@ async function analyzeMarketHandler(req: Request) {
  * Creates an error response
  */
 function createErrorResponse(error: any) {
-    console.error('💥 Error occurred:', error.message);
-    console.error('📚 Stack trace:', error.stack);
     return new Response(
         JSON.stringify({
             success: false,
@@ -284,15 +253,19 @@ function createErrorResponse(error: any) {
  * Edge Function Entry Point
  */
 Deno.serve(async (req) => {
-    console.log('🚀 analyze-coffee-market invoked:', req.method);
+    const start = Date.now();
 
     if (req.method === 'OPTIONS') {
         return handleOptionsRequest();
     }
 
     try {
-        return await analyzeMarketHandler(req);
+        console.log(`🚀 [${new Date().toISOString()}] ${req.method} analyze-coffee-market`);
+        const result = await analyzeMarketHandler(req);
+        console.log(`✅ Success [${Date.now() - start}ms]`);
+        return result;
     } catch (error) {
+        console.error(`❌ Error [${Date.now() - start}ms]: ${error.message}`);
         return createErrorResponse(error);
     }
 });
