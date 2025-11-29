@@ -24,6 +24,10 @@ export default function DashboardScreen() {
         router.push('/sales-diary');
     };
 
+    const handleNavigateToProfile = () => {
+        router.push('/profile');
+    };
+
     const handleRefreshPrices = async () => {
         if (!session) {
             Alert.alert('Error', 'You must be logged in to refresh prices');
@@ -104,6 +108,8 @@ export default function DashboardScreen() {
                 <Button title="Analyze with AI" onPress={handleAnalyze} color="#2980b9" />
                 <View style={{ height: 10 }} />
                 <Button title="My Sales Diary" onPress={handleNavigateToSalesDiary} color="#8e44ad" />
+                <View style={{ height: 10 }} />
+                <Button title="My Profile" onPress={handleNavigateToProfile} color="#d35400" />
             </View>
         </ScrollView>
     );
