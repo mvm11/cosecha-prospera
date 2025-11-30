@@ -30,43 +30,113 @@ export const CoffeeColors = {
   darkGray: '#7f8c8d',
 };
 
-// Colores semánticos para uso en la app
+// Colores semánticos para uso en la app (estructura light/dark)
 export const Colors = {
-  // Fondos
-  background: CoffeeColors.lightBeige,
-  backgroundSecondary: CoffeeColors.lightGold,
-  backgroundCard: CoffeeColors.white,
+  light: {
+    // Fondos
+    background: CoffeeColors.lightBeige,
+    backgroundSecondary: CoffeeColors.lightGold,
+    backgroundCard: CoffeeColors.white,
 
-  // Texto
-  text: CoffeeColors.veryDarkBrown,
-  textSecondary: CoffeeColors.darkBrown,
-  textMuted: CoffeeColors.darkGray,
-  textOnPrimary: CoffeeColors.white,
+    // Texto
+    text: CoffeeColors.veryDarkBrown,
+    textSecondary: CoffeeColors.darkBrown,
+    textMuted: CoffeeColors.darkGray,
+    textOnPrimary: CoffeeColors.white,
 
-  // Botones
-  primary: CoffeeColors.mediumBrown,
-  primaryDark: CoffeeColors.darkBrown,
-  primaryLight: CoffeeColors.lightGold,
+    // Botones
+    primary: CoffeeColors.mediumBrown,
+    primaryDark: CoffeeColors.darkBrown,
+    primaryLight: CoffeeColors.lightGold,
 
-  // Bordes
-  border: CoffeeColors.lightGold,
-  borderLight: CoffeeColors.lightBeige,
+    // Bordes
+    border: CoffeeColors.lightGold,
+    borderLight: CoffeeColors.lightBeige,
 
-  // Estados
-  success: CoffeeColors.success,
-  error: CoffeeColors.error,
-  warning: CoffeeColors.warning,
-  info: CoffeeColors.info,
+    // Estados
+    success: CoffeeColors.success,
+    error: CoffeeColors.error,
+    warning: CoffeeColors.warning,
+    info: CoffeeColors.info,
 
-  // Navigation
-  tabBarBackground: CoffeeColors.lightBeige,
-  tabBarActive: CoffeeColors.mediumBrown,
-  tabBarInactive: CoffeeColors.darkGray,
+    // Navigation
+    tabBarBackground: CoffeeColors.lightBeige,
+    tabBarActive: CoffeeColors.mediumBrown,
+    tabBarInactive: CoffeeColors.darkGray,
 
-  // Inputs
-  inputBackground: CoffeeColors.white,
-  inputBorder: CoffeeColors.mediumBrown,
-  inputPlaceholder: CoffeeColors.darkGray,
+    // Inputs
+    inputBackground: CoffeeColors.white,
+    inputBorder: CoffeeColors.mediumBrown,
+    inputPlaceholder: CoffeeColors.darkGray,
+
+    // Icons
+    icon: CoffeeColors.mediumBrown,
+  },
+  dark: {
+    // Fondos
+    background: CoffeeColors.veryDarkBrown,
+    backgroundSecondary: CoffeeColors.darkBrown,
+    backgroundCard: CoffeeColors.mediumBrown,
+
+    // Texto
+    text: CoffeeColors.lightBeige,
+    textSecondary: CoffeeColors.lightGold,
+    textMuted: CoffeeColors.mediumGray,
+    textOnPrimary: CoffeeColors.white,
+
+    // Botones
+    primary: CoffeeColors.lightGold,
+    primaryDark: CoffeeColors.mediumBrown,
+    primaryLight: CoffeeColors.lightBeige,
+
+    // Bordes
+    border: CoffeeColors.mediumBrown,
+    borderLight: CoffeeColors.darkBrown,
+
+    // Estados
+    success: CoffeeColors.success,
+    error: CoffeeColors.error,
+    warning: CoffeeColors.warning,
+    info: CoffeeColors.info,
+
+    // Navigation
+    tabBarBackground: CoffeeColors.veryDarkBrown,
+    tabBarActive: CoffeeColors.lightGold,
+    tabBarInactive: CoffeeColors.mediumGray,
+
+    // Inputs
+    inputBackground: CoffeeColors.darkBrown,
+    inputBorder: CoffeeColors.lightGold,
+    inputPlaceholder: CoffeeColors.mediumGray,
+
+    // Icons
+    icon: CoffeeColors.lightGold,
+  },
+  // Backward compatibility - flat export defaults to light theme
+  ...{
+    background: CoffeeColors.lightBeige,
+    backgroundSecondary: CoffeeColors.lightGold,
+    backgroundCard: CoffeeColors.white,
+    text: CoffeeColors.veryDarkBrown,
+    textSecondary: CoffeeColors.darkBrown,
+    textMuted: CoffeeColors.darkGray,
+    textOnPrimary: CoffeeColors.white,
+    primary: CoffeeColors.mediumBrown,
+    primaryDark: CoffeeColors.darkBrown,
+    primaryLight: CoffeeColors.lightGold,
+    border: CoffeeColors.lightGold,
+    borderLight: CoffeeColors.lightBeige,
+    success: CoffeeColors.success,
+    error: CoffeeColors.error,
+    warning: CoffeeColors.warning,
+    info: CoffeeColors.info,
+    tabBarBackground: CoffeeColors.lightBeige,
+    tabBarActive: CoffeeColors.mediumBrown,
+    tabBarInactive: CoffeeColors.darkGray,
+    inputBackground: CoffeeColors.white,
+    inputBorder: CoffeeColors.mediumBrown,
+    inputPlaceholder: CoffeeColors.darkGray,
+  },
 };
 
 // Tokens de spacing (en pixels)
