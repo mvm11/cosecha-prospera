@@ -1,7 +1,8 @@
 
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Button, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 import { supabase } from '../../../core/supabase';
 import { useAuth } from '../../auth/context/AuthContext';
 import PriceCard from '../components/PriceCard';
@@ -19,7 +20,7 @@ export default function DashboardScreen() {
 
     const handleRefreshPrices = async () => {
         if (!session) {
-            Alert.alert('Error', 'You must be logged in to refresh prices');
+            Alert.alert('Error', 'Debes iniciar sesión para actualizar los precios');
             return;
         }
 
@@ -40,7 +41,7 @@ export default function DashboardScreen() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to fetch prices');
+                throw new Error(data.error || 'Error al obtener precios');
             }
 
             // Guard against unexpected shape
@@ -49,15 +50,15 @@ export default function DashboardScreen() {
             const priceDate = data?.latestPrice?.date;
 
             if (priceValue == null || priceDate == null) {
-                throw new Error('Invalid price data received from Edge Function');
+                throw new Error('Datos de precio inválidos recibidos');
             }
 
-            Alert.alert('Success', `Latest price updated: $${priceValue.toLocaleString('es-CO')} (${priceDate})`);
+            Alert.alert('Éxito', `Precio actualizado: $${priceValue.toLocaleString('es-CO')} (${priceDate})`);
 
             // Refresh the local data
             await refetch();
         } catch (err: any) {
-            Alert.alert('Error', err.message || 'Failed to refresh prices');
+            Alert.alert('Error', err.message || 'Error al actualizar precios');
         } finally {
             setRefreshing(false);
         }
@@ -67,22 +68,29 @@ export default function DashboardScreen() {
         <ScrollView
             contentContainerStyle={styles.container}
             refreshControl={
-                <RefreshControl refreshing={loading} onRefresh={refetch} />
+                <RefreshControl refreshing={loading} onRefresh={refetch} tintColor={Colors.primary} />
             }
         >
             <View style={styles.header}>
-                <Text style={styles.greeting}>Hola, {user?.email?.split('@')[0]}</Text>
-                <Button title="Sign Out" onPress={handleSignOut} color="#e74c3c" />
+                <View>
+                    <Text style={styles.greeting}>Hola,</Text>
+                    <Text style={styles.userName}>{user?.email?.split('@')[0]}</Text>
+                </View>
+                <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+                    <Text style={styles.signOutText}>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
 
             {error ? (
-                <Text style={styles.error}>Error loading price: {error}</Text>
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>Error al cargar precio: {error}</Text>
+                </View>
             ) : price != null ? (
                 <PriceCard fncPrice={price.fnc_price} date={price.date} />
             ) : (
                 <View style={styles.emptyState}>
-                    <Text>No price data available.</Text>
-                    <Text style={styles.hint}>Pull down to refresh or fetch from FNC</Text>
+                    <Text style={styles.emptyTitle}>No hay datos de precio disponibles</Text>
+                    <Text style={styles.hint}>Desliza hacia abajo para actualizar o consulta la FNC</Text>
                 </View>
             )}
 
@@ -91,16 +99,19 @@ export default function DashboardScreen() {
                 style={styles.aiButton}
                 onPress={() => router.push('/ai-analysis')}
             >
-                <Text style={styles.aiButtonText}>✨ Analyze with AI</Text>
+                <Text style={styles.aiButtonText}>✨ Analizar con IA</Text>
             </TouchableOpacity>
 
             <View style={styles.actions}>
-                <Button
-                    title={refreshing ? "Fetching from FNC..." : "Refresh Prices from FNC"}
+                <TouchableOpacity
+                    style={[styles.refreshButton, refreshing && styles.disabledButton]}
                     onPress={handleRefreshPrices}
-                    color="#27ae60"
                     disabled={refreshing}
-                />
+                >
+                    <Text style={styles.refreshButtonText}>
+                        {refreshing ? "Consultando FNC..." : "Refrescar precios FNC"}
+                    </Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
@@ -109,52 +120,94 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
+        padding: Spacing.lg,
+        backgroundColor: Colors.background,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
-        marginTop: 40,
+        marginBottom: Spacing.xl,
+        marginTop: Spacing.xxxl,
     },
     greeting: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#2c3e50',
+        fontSize: FontSizes.base,
+        color: Colors.textSecondary,
     },
-    error: {
-        color: 'red',
+    userName: {
+        fontSize: FontSizes.xxl,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
+    },
+    signOutButton: {
+        backgroundColor: Colors.error,
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.base,
+        borderRadius: BorderRadius.md,
+    },
+    signOutText: {
+        color: Colors.textOnPrimary,
+        fontSize: FontSizes.sm,
+        fontWeight: FontWeights.semibold,
+    },
+    errorContainer: {
+        backgroundColor: '#ffeaa7',
+        padding: Spacing.base,
+        borderRadius: BorderRadius.md,
+        marginVertical: Spacing.lg,
+    },
+    errorText: {
+        color: Colors.error,
         textAlign: 'center',
-        marginVertical: 20,
+        fontSize: FontSizes.base,
     },
     emptyState: {
         alignItems: 'center',
-        marginVertical: 40,
+        marginVertical: Spacing.xxxl,
+        backgroundColor: Colors.backgroundCard,
+        padding: Spacing.xl,
+        borderRadius: BorderRadius.lg,
+    },
+    emptyTitle: {
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.semibold,
+        color: Colors.textMuted,
+        marginBottom: Spacing.sm,
     },
     hint: {
-        color: '#999',
-        marginTop: 5,
+        color: Colors.textMuted,
+        fontSize: FontSizes.sm,
+        textAlign: 'center',
     },
     aiButton: {
-        backgroundColor: '#8e44ad', // Purple for AI
-        padding: 15,
-        borderRadius: 10,
+        backgroundColor: Colors.primary,
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.lg,
         alignItems: 'center',
-        marginBottom: 20,
-        shadowColor: '#8e44ad',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 4,
+        marginBottom: Spacing.lg,
+        ...Shadows.medium,
     },
     aiButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: Colors.textOnPrimary,
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.bold,
     },
     actions: {
-        gap: 10,
+        gap: Spacing.md,
+    },
+    refreshButton: {
+        backgroundColor: Colors.success,
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.lg,
+        alignItems: 'center',
+        ...Shadows.small,
+    },
+    refreshButtonText: {
+        color: Colors.textOnPrimary,
+        fontSize: FontSizes.base,
+        fontWeight: FontWeights.semibold,
+    },
+    disabledButton: {
+        backgroundColor: Colors.textMuted,
     },
 });

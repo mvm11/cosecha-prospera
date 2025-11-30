@@ -76,6 +76,18 @@ Una aplicación móvil intuitiva que:
 
 ---
 
+## 📱 Demos
+
+### Demostración en iOS
+
+![Demo de Cosecha Próspera en iOS](/Users/mateo/Desktop/cosecha-prospera/docs/ios-demo.mov)
+
+### Demostración en Android
+
+![Demo de Cosecha Próspera en Android](/Users/mateo/Desktop/cosecha-prospera/docs/demo-android.mov)
+
+---
+
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend

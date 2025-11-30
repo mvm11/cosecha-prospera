@@ -8,6 +8,7 @@ import {
     View,
 } from 'react-native';
 import Markdown from 'react-native-markdown-display';
+import { BorderRadius, CoffeeColors, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 import { useAIAnalysis } from '../hooks/useAIAnalysis';
 
 export default function AnalysisScreen() {
@@ -33,15 +34,15 @@ export default function AnalysisScreen() {
                 {/* Welcome Message */}
                 {messages.length === 0 && !loading && (
                     <View style={styles.welcomeContainer}>
-                        <Text style={styles.welcomeTitle}>🤖 AI Coffee Advisor</Text>
+                        <Text style={styles.welcomeTitle}>🤖 Asesor de Café IA</Text>
                         <Text style={styles.welcomeText}>
-                            I can analyze market trends, your sales history, and your farm profile to give you personalized advice.
+                            Puedo analizar tendencias del mercado, tu historial de ventas y tu perfil para darte consejos personalizados.
                         </Text>
                         <TouchableOpacity
                             style={styles.analyzeButton}
                             onPress={analyzeMarket}
                         >
-                            <Text style={styles.analyzeButtonText}>Start Analysis</Text>
+                            <Text style={styles.analyzeButtonText}>Iniciar análisis</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -56,7 +57,7 @@ export default function AnalysisScreen() {
                         ]}
                     >
                         <Text style={styles.roleLabel}>
-                            {msg.role === 'assistant' ? '🤖 AI Advisor' : '👤 You'}
+                            {msg.role === 'assistant' ? '🤖 Asesor IA' : '👤 Tú'}
                         </Text>
 
                         {msg.role === 'assistant' ? (
@@ -76,9 +77,9 @@ export default function AnalysisScreen() {
                 {/* Loading State */}
                 {loading && (
                     <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color="#27ae60" />
-                        <Text style={styles.loadingText}>Analyzing market data...</Text>
-                        <Text style={styles.loadingSubText}>Checking prices, trends, and your history</Text>
+                        <ActivityIndicator size="large" color={Colors.primary} />
+                        <Text style={styles.loadingText}>Analizando datos del mercado...</Text>
+                        <Text style={styles.loadingSubText}>Revisando precios, tendencias y tu historial</Text>
                     </View>
                 )}
 
@@ -90,7 +91,7 @@ export default function AnalysisScreen() {
                             style={styles.retryButton}
                             onPress={analyzeMarket}
                         >
-                            <Text style={styles.retryButtonText}>Retry</Text>
+                            <Text style={styles.retryButtonText}>Reintentar</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -102,140 +103,148 @@ export default function AnalysisScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.background,
     },
     scrollContent: {
-        padding: 20,
-        paddingBottom: 40,
+        padding: Spacing.lg,
+        paddingBottom: Spacing.xxxl,
     },
     welcomeContainer: {
         alignItems: 'center',
-        marginTop: 60,
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        elevation: 2,
+        marginTop: Spacing.xxxl,
+        padding: Spacing.xl,
+        backgroundColor: Colors.backgroundCard,
+        borderRadius: BorderRadius.lg,
+        ...Shadows.medium,
     },
     welcomeTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#2c3e50',
+        fontSize: FontSizes.xxl,
+        fontWeight: FontWeights.bold,
+        marginBottom: Spacing.md,
+        color: Colors.text,
     },
     welcomeText: {
         textAlign: 'center',
-        color: '#7f8c8d',
-        fontSize: 16,
-        marginBottom: 20,
+        color: Colors.textSecondary,
+        fontSize: FontSizes.base,
+        marginBottom: Spacing.lg,
         lineHeight: 24,
     },
     analyzeButton: {
-        backgroundColor: '#27ae60',
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        borderRadius: 25,
-        elevation: 3,
+        backgroundColor: Colors.primary,
+        paddingVertical: Spacing.base,
+        paddingHorizontal: Spacing.xl,
+        borderRadius: BorderRadius.lg,
+        ...Shadows.medium,
     },
     analyzeButtonText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
+        color: Colors.textOnPrimary,
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.bold,
     },
     messageBubble: {
-        padding: 15,
-        borderRadius: 15,
-        marginBottom: 15,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.md,
+        marginBottom: Spacing.base,
         maxWidth: '100%',
-        elevation: 1,
+        ...Shadows.small,
     },
     aiBubble: {
-        backgroundColor: 'white',
-        borderTopLeftRadius: 5,
+        backgroundColor: Colors.backgroundSecondary,
+        borderTopLeftRadius: Spacing.xs,
+        borderWidth: 1,
+        borderColor: Colors.border,
     },
     userBubble: {
-        backgroundColor: '#dff9fb',
+        backgroundColor: CoffeeColors.lightBeige,
         alignSelf: 'flex-end',
-        borderTopRightRadius: 5,
+        borderTopRightRadius: Spacing.xs,
+        borderWidth: 1,
+        borderColor: Colors.border,
     },
     roleLabel: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        color: '#95a5a6',
-        marginBottom: 5,
+        fontSize: FontSizes.xs,
+        fontWeight: FontWeights.semibold,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.xs,
     },
     messageText: {
-        fontSize: 16,
-        color: '#2c3e50',
+        fontSize: FontSizes.base,
+        color: Colors.text,
         lineHeight: 24,
     },
     timestamp: {
-        fontSize: 10,
-        color: '#bdc3c7',
+        fontSize: FontSizes.xs,
+        color: Colors.textMuted,
         alignSelf: 'flex-end',
-        marginTop: 5,
+        marginTop: Spacing.xs,
     },
     loadingContainer: {
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: Spacing.lg,
+        backgroundColor: Colors.backgroundCard,
+        padding: Spacing.xl,
+        borderRadius: BorderRadius.lg,
     },
     loadingText: {
-        marginTop: 10,
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#2c3e50',
+        marginTop: Spacing.md,
+        fontSize: FontSizes.base,
+        fontWeight: FontWeights.semibold,
+        color: Colors.text,
     },
     loadingSubText: {
-        fontSize: 14,
-        color: '#7f8c8d',
-        marginTop: 5,
+        fontSize: FontSizes.sm,
+        color: Colors.textSecondary,
+        marginTop: Spacing.xs,
     },
     errorContainer: {
-        padding: 15,
+        padding: Spacing.base,
         backgroundColor: '#ffeaa7',
-        borderRadius: 10,
-        marginTop: 20,
+        borderRadius: BorderRadius.md,
+        marginTop: Spacing.lg,
         alignItems: 'center',
     },
     errorText: {
-        color: '#d35400',
-        marginBottom: 10,
+        color: Colors.error,
+        marginBottom: Spacing.md,
+        fontSize: FontSizes.base,
     },
     retryButton: {
-        backgroundColor: '#d35400',
-        paddingVertical: 8,
-        paddingHorizontal: 20,
-        borderRadius: 15,
+        backgroundColor: Colors.error,
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.lg,
+        borderRadius: BorderRadius.md,
     },
     retryButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: Colors.textOnPrimary,
+        fontWeight: FontWeights.semibold,
     },
 });
 
 const markdownStyles = StyleSheet.create({
     body: {
-        fontSize: 16,
-        color: '#2c3e50',
+        fontSize: FontSizes.base,
+        color: Colors.text,
         lineHeight: 24,
     },
     heading1: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 5,
-        color: '#2c3e50',
+        fontSize: FontSizes.xl,
+        fontWeight: FontWeights.bold,
+        marginTop: Spacing.md,
+        marginBottom: Spacing.xs,
+        color: Colors.text,
     },
     heading2: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 5,
-        color: '#2c3e50',
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.bold,
+        marginTop: Spacing.md,
+        marginBottom: Spacing.xs,
+        color: Colors.text,
     },
     strong: {
-        fontWeight: 'bold',
+        fontWeight: FontWeights.bold,
     },
     list_item: {
-        marginVertical: 5,
+        marginVertical: Spacing.xs,
     },
 });

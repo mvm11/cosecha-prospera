@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 
 type SaleFormModalProps = {
     visible: boolean;
@@ -38,27 +39,27 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
         const today = new Date();
         today.setHours(23, 59, 59, 999);
         if (date > today) {
-            newErrors.date = 'Date cannot be in the future';
+            newErrors.date = 'La fecha no puede ser futura';
         }
 
         // Validate amount (must be a positive number)
         const numAmount = parseFloat(amount);
         if (!amount || amount.trim() === '') {
-            newErrors.amount = 'Amount is required';
+            newErrors.amount = 'El monto es requerido';
         } else if (isNaN(numAmount)) {
-            newErrors.amount = 'Amount must be a valid number';
+            newErrors.amount = 'El monto debe ser un número válido';
         } else if (numAmount <= 0) {
-            newErrors.amount = 'Amount must be greater than zero';
+            newErrors.amount = 'El monto debe ser mayor a cero';
         }
 
         // Validate kilograms (must be a positive number)
         const numKilograms = parseFloat(kilograms);
         if (!kilograms || kilograms.trim() === '') {
-            newErrors.kilograms = 'Kilograms is required';
+            newErrors.kilograms = 'Los kilogramos son requeridos';
         } else if (isNaN(numKilograms)) {
-            newErrors.kilograms = 'Kilograms must be a valid number';
+            newErrors.kilograms = 'Los kilogramos deben ser un número válido';
         } else if (numKilograms <= 0) {
-            newErrors.kilograms = 'Kilograms must be greater than zero';
+            newErrors.kilograms = 'Los kilogramos deben ser mayor a cero';
         }
 
         setErrors(newErrors);
@@ -89,7 +90,7 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
             setErrors({});
             onClose();
         } else {
-            Alert.alert('Error', result.error || 'Failed to save sale');
+            Alert.alert('Error', result.error || 'Error al guardar la venta');
         }
     };
 
@@ -113,11 +114,11 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
                 <View style={styles.modal}>
-                    <Text style={styles.title}>{initialData ? 'Edit Sale' : 'Add New Sale'}</Text>
+                    <Text style={styles.title}>{initialData ? 'Editar Venta' : 'Agregar Venta'}</Text>
 
                     {/* Date Field */}
                     <View style={styles.field}>
-                        <Text style={styles.label}>Date *</Text>
+                        <Text style={styles.label}>Fecha *</Text>
                         <TouchableOpacity
                             style={[styles.dateButton, errors.date && styles.inputError]}
                             onPress={() => setShowDatePicker(true)}
@@ -145,7 +146,7 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
 
                     {/* Amount Field */}
                     <View style={styles.field}>
-                        <Text style={styles.label}>Total Amount (COP) *</Text>
+                        <Text style={styles.label}>Monto Total (COP) *</Text>
                         <TextInput
                             style={[styles.input, errors.amount && styles.inputError]}
                             value={amount}
@@ -153,7 +154,8 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
                                 setAmount(text);
                                 setErrors({ ...errors, amount: undefined });
                             }}
-                            placeholder="e.g., 1890000"
+                            placeholder="ej. 1890000"
+                            placeholderTextColor={Colors.inputPlaceholder}
                             keyboardType="numeric"
                         />
                         {errors.amount && <Text style={styles.errorText}>{errors.amount}</Text>}
@@ -161,7 +163,7 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
 
                     {/* Kilograms Field */}
                     <View style={styles.field}>
-                        <Text style={styles.label}>Kilograms Sold *</Text>
+                        <Text style={styles.label}>Kilogramos Vendidos *</Text>
                         <TextInput
                             style={[styles.input, errors.kilograms && styles.inputError]}
                             value={kilograms}
@@ -169,7 +171,8 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
                                 setKilograms(text);
                                 setErrors({ ...errors, kilograms: undefined });
                             }}
-                            placeholder="e.g., 125"
+                            placeholder="ej. 125"
+                            placeholderTextColor={Colors.inputPlaceholder}
                             keyboardType="numeric"
                         />
                         {errors.kilograms && <Text style={styles.errorText}>{errors.kilograms}</Text>}
@@ -182,14 +185,14 @@ export default function SaleFormModal({ visible, onClose, onSave, initialData }:
                             onPress={handleCancel}
                             disabled={saving}
                         >
-                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                            <Text style={styles.cancelButtonText}>Cancelar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.saveButton]}
                             onPress={handleSave}
                             disabled={saving}
                         >
-                            <Text style={styles.saveButtonText}>{saving ? 'Saving...' : 'Save'}</Text>
+                            <Text style={styles.saveButtonText}>{saving ? 'Guardando...' : 'Guardar'}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -206,77 +209,83 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modal: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        padding: 20,
+        backgroundColor: Colors.backgroundCard,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
         width: '90%',
         maxWidth: 400,
     },
     title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#2c3e50',
+        fontSize: FontSizes.xl,
+        fontWeight: FontWeights.bold,
+        marginBottom: Spacing.lg,
+        color: Colors.text,
     },
     field: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 14,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: '#34495e',
+        fontSize: FontSizes.sm,
+        fontWeight: FontWeights.semibold,
+        marginBottom: Spacing.sm,
+        color: Colors.text,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
+        borderWidth: 2,
+        borderColor: Colors.inputBorder,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.md,
+        fontSize: FontSizes.base,
+        backgroundColor: Colors.inputBackground,
+        color: Colors.text,
     },
     inputError: {
-        borderColor: '#e74c3c',
+        borderColor: Colors.error,
     },
     dateButton: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
+        borderWidth: 2,
+        borderColor: Colors.inputBorder,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.md,
+        backgroundColor: Colors.inputBackground,
     },
     dateText: {
-        fontSize: 16,
-        color: '#2c3e50',
+        fontSize: FontSizes.base,
+        color: Colors.text,
     },
     errorText: {
-        color: '#e74c3c',
-        fontSize: 12,
-        marginTop: 4,
+        color: Colors.error,
+        fontSize: FontSizes.xs,
+        marginTop: Spacing.xs,
     },
     actions: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        gap: 10,
-        marginTop: 10,
+        gap: Spacing.md,
+        marginTop: Spacing.md,
     },
     button: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 8,
+        paddingVertical: Spacing.md,
+        paddingHorizontal: Spacing.lg,
+        borderRadius: BorderRadius.md,
         minWidth: 80,
         alignItems: 'center',
     },
     cancelButton: {
-        backgroundColor: '#ecf0f1',
+        backgroundColor: Colors.backgroundSecondary,
+        borderWidth: 1,
+        borderColor: Colors.border,
     },
     cancelButtonText: {
-        color: '#34495e',
-        fontWeight: '600',
+        color: Colors.text,
+        fontWeight: FontWeights.semibold,
     },
     saveButton: {
-        backgroundColor: '#27ae60',
+        backgroundColor: Colors.primary,
+        ...Shadows.small,
     },
     saveButtonText: {
-        color: 'white',
-        fontWeight: '600',
+        color: Colors.textOnPrimary,
+        fontWeight: FontWeights.semibold,
     },
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 
 type PriceCardProps = {
     fncPrice: number;
@@ -16,7 +17,7 @@ export default function PriceCard({ fncPrice, date }: PriceCardProps) {
 
     return (
         <View style={styles.card}>
-            <Text style={styles.label}>Precio Interno (Carga 125kg)</Text>
+            <Text style={styles.label}>Precio Interno (Carga 125 kg)</Text>
             <Text style={styles.price}>{formattedPrice}</Text>
             <Text style={styles.date}>Fecha: {date}</Text>
         </View>
@@ -25,30 +26,29 @@ export default function PriceCard({ fncPrice, date }: PriceCardProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 15,
+        backgroundColor: Colors.backgroundSecondary,
+        padding: Spacing.xl,
+        borderRadius: BorderRadius.lg,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-        marginVertical: 20,
+        borderWidth: 2,
+        borderColor: Colors.primary,
+        ...Shadows.medium,
+        marginVertical: Spacing.lg,
     },
     label: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 5,
+        fontSize: FontSizes.base,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.sm,
+        fontWeight: FontWeights.medium,
     },
     price: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#27ae60',
-        marginBottom: 5,
+        fontSize: FontSizes.huge,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
+        marginBottom: Spacing.sm,
     },
     date: {
-        fontSize: 14,
-        color: '#999',
+        fontSize: FontSizes.sm,
+        color: Colors.textMuted,
     },
 });

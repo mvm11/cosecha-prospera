@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 import { supabase } from '../../../core/supabase';
 
 export default function LoginScreen() {
@@ -29,52 +30,78 @@ export default function LoginScreen() {
         if (error) {
             Alert.alert('Error', error.message);
         } else {
-            Alert.alert('Success', 'Please check your inbox for email verification!');
+            Alert.alert('Éxito', '¡Por favor revisa tu correo para verificar tu cuenta!');
         }
         setLoading(false);
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Cosecha Próspera</Text>
-            <Text style={styles.subtitle}>
-                {isRegistering ? 'Create an account' : 'Welcome back'}
-            </Text>
+            <View style={styles.header}>
+                <Text style={styles.title}>Cosecha Próspera</Text>
+                <Text style={styles.tagline}>Cultiva mejores resultados</Text>
+            </View>
 
-            <View style={styles.form}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
+            <View style={styles.card}>
+                <Text style={styles.subtitle}>
+                    {isRegistering ? 'Crear cuenta' : 'Bienvenido'}
+                </Text>
 
-                {loading ? (
-                    <ActivityIndicator />
-                ) : (
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            title={isRegistering ? 'Sign Up' : 'Sign In'}
-                            onPress={isRegistering ? signUpWithEmail : signInWithEmail}
+                <View style={styles.form}>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Correo</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="correo@gmail.com"
+                            placeholderTextColor={Colors.inputPlaceholder}
+                            value={email}
+                            onChangeText={setEmail}
+                            autoCapitalize="none"
+                            keyboardType="email-address"
                         />
                     </View>
-                )}
 
-                <View style={styles.switchContainer}>
-                    <Button
-                        title={isRegistering ? 'Switch to Sign In' : 'Switch to Sign Up'}
-                        onPress={() => setIsRegistering(!isRegistering)}
-                        color="#666"
-                    />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Contraseña</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="••••••••••••••••••••••••••••"
+                            placeholderTextColor={Colors.inputPlaceholder}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
+                    </View>
+
+                    {!isRegistering && (
+                        <TouchableOpacity style={styles.forgotPassword}>
+                            <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {loading ? (
+                        <ActivityIndicator size="large" color={Colors.primary} style={styles.loader} />
+                    ) : (
+                        <TouchableOpacity
+                            style={styles.primaryButton}
+                            onPress={isRegistering ? signUpWithEmail : signInWithEmail}
+                        >
+                            <Text style={styles.primaryButtonText}>
+                                {isRegistering ? 'Registrarse' : 'Iniciar sesión'}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+
+                    <View style={styles.switchContainer}>
+                        <Text style={styles.switchText}>
+                            {isRegistering ? '¿Ya tienes cuenta? ' : '¿No tienes una cuenta? '}
+                        </Text>
+                        <TouchableOpacity onPress={() => setIsRegistering(!isRegistering)}>
+                            <Text style={styles.switchLink}>
+                                {isRegistering ? 'Inicia sesión' : 'Regístrate'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </View>
@@ -84,34 +111,95 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: Colors.background,
         justifyContent: 'center',
-        padding: 20,
+        padding: Spacing.xl,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: Spacing.xxxl,
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 10,
+        fontSize: FontSizes.huge,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
+        marginBottom: Spacing.sm,
+    },
+    tagline: {
+        fontSize: FontSizes.base,
+        color: Colors.textSecondary,
+        fontStyle: 'italic',
+    },
+    card: {
+        backgroundColor: Colors.backgroundCard,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.xl,
+        ...Shadows.medium,
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: FontSizes.xxl,
+        fontWeight: FontWeights.semibold,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.xl,
         textAlign: 'center',
-        marginBottom: 30,
-        color: '#666',
     },
     form: {
-        gap: 15,
+        gap: Spacing.base,
+    },
+    inputContainer: {
+        gap: Spacing.sm,
+    },
+    label: {
+        fontSize: FontSizes.base,
+        fontWeight: FontWeights.semibold,
+        color: Colors.text,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: Colors.inputBorder,
+        backgroundColor: Colors.inputBackground,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.md,
+        fontSize: FontSizes.base,
+        color: Colors.text,
     },
-    buttonContainer: {
-        marginTop: 10,
+    forgotPassword: {
+        alignSelf: 'flex-end',
+    },
+    forgotPasswordText: {
+        color: Colors.textSecondary,
+        fontSize: FontSizes.sm,
+        textDecorationLine: 'underline',
+    },
+    loader: {
+        marginVertical: Spacing.lg,
+    },
+    primaryButton: {
+        backgroundColor: Colors.primary,
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.lg,
+        alignItems: 'center',
+        marginTop: Spacing.md,
+        ...Shadows.small,
+    },
+    primaryButtonText: {
+        color: Colors.textOnPrimary,
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.bold,
     },
     switchContainer: {
-        marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: Spacing.lg,
+    },
+    switchText: {
+        color: Colors.textMuted,
+        fontSize: FontSizes.sm,
+    },
+    switchLink: {
+        color: Colors.primary,
+        fontSize: FontSizes.sm,
+        fontWeight: FontWeights.semibold,
     },
 });

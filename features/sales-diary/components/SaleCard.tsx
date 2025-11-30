@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 
 type SaleCardProps = {
     sale: {
@@ -15,11 +16,11 @@ type SaleCardProps = {
 export default function SaleCard({ sale, onEdit, onDelete }: SaleCardProps) {
     const handleDelete = () => {
         Alert.alert(
-            'Delete Sale',
-            'Are you sure you want to delete this sale?',
+            'Eliminar Venta',
+            '¿Estás seguro de que quieres eliminar esta venta?',
             [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: onDelete },
+                { text: 'Cancelar', style: 'cancel' },
+                { text: 'Eliminar', style: 'destructive', onPress: onDelete },
             ]
         );
     };
@@ -57,10 +58,10 @@ export default function SaleCard({ sale, onEdit, onDelete }: SaleCardProps) {
             </View>
             <View style={styles.actions}>
                 <TouchableOpacity onPress={onEdit} style={styles.actionButton}>
-                    <Text style={styles.editText}>Edit</Text>
+                    <Text style={styles.editText}>Editar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleDelete} style={styles.actionButton}>
-                    <Text style={styles.deleteText}>Delete</Text>
+                    <Text style={styles.deleteText}>Eliminar</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -69,50 +70,50 @@ export default function SaleCard({ sale, onEdit, onDelete }: SaleCardProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: 'white',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
+        backgroundColor: Colors.backgroundCard,
+        padding: Spacing.base,
+        borderRadius: BorderRadius.md,
+        marginBottom: Spacing.md,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        ...Shadows.small,
     },
     content: {
         flex: 1,
     },
     date: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 4,
+        fontSize: FontSizes.sm,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.xs,
     },
     amount: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#2c3e50',
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
     },
     details: {
-        fontSize: 12,
-        color: '#95a5a6',
-        marginTop: 4,
+        fontSize: FontSizes.xs,
+        color: Colors.textMuted,
+        marginTop: Spacing.xs,
     },
     actions: {
         flexDirection: 'row',
-        gap: 10,
+        gap: Spacing.md,
     },
     actionButton: {
-        padding: 8,
+        padding: Spacing.sm,
     },
     editText: {
-        color: '#2980b9',
-        fontWeight: '600',
+        color: Colors.primary,
+        fontWeight: FontWeights.semibold,
+        fontSize: FontSizes.sm,
     },
     deleteText: {
-        color: '#e74c3c',
-        fontWeight: '600',
+        color: Colors.error,
+        fontWeight: FontWeights.semibold,
+        fontSize: FontSizes.sm,
     },
 });

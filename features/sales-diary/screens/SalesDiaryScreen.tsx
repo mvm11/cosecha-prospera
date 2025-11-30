@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 import SaleCard from '../components/SaleCard';
 import SaleFormModal from '../components/SaleFormModal';
 import { useSalesNotes } from '../hooks/useSalesNotes';
@@ -38,8 +39,8 @@ export default function SalesDiaryScreen() {
 
     const renderEmptyState = () => (
         <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>No Sales Yet</Text>
-            <Text style={styles.emptyText}>Start recording your sales to track your earnings</Text>
+            <Text style={styles.emptyTitle}>Aún no hay ventas</Text>
+            <Text style={styles.emptyText}>Comienza a registrar tus ventas para llevar control de tus ganancias</Text>
         </View>
     );
 
@@ -47,9 +48,9 @@ export default function SalesDiaryScreen() {
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <Text style={styles.title}>Sales Diary</Text>
+                <Text style={styles.title}>Mis ventas</Text>
                 <TouchableOpacity style={styles.addButton} onPress={handleAddSale}>
-                    <Text style={styles.addButtonText}>+ Add Sale</Text>
+                    <Text style={styles.addButtonText}>+ Agregar</Text>
                 </TouchableOpacity>
             </View>
 
@@ -86,60 +87,65 @@ export default function SalesDiaryScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.background,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        paddingTop: 60,
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        padding: Spacing.lg,
+        paddingTop: Spacing.xxxl + Spacing.lg,
+        backgroundColor: Colors.backgroundCard,
+        borderBottomWidth: 2,
+        borderBottomColor: Colors.border,
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#2c3e50',
+        fontSize: FontSizes.xxl,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
     },
     addButton: {
-        backgroundColor: '#27ae60',
-        paddingVertical: 8,
-        paddingHorizontal: 15,
-        borderRadius: 8,
+        backgroundColor: Colors.primary,
+        paddingVertical: Spacing.sm,
+        paddingHorizontal: Spacing.base,
+        borderRadius: BorderRadius.md,
+        ...Shadows.small,
     },
     addButtonText: {
-        color: 'white',
-        fontWeight: '600',
-        fontSize: 14,
+        color: Colors.textOnPrimary,
+        fontWeight: FontWeights.semibold,
+        fontSize: FontSizes.sm,
     },
     list: {
-        padding: 20,
+        padding: Spacing.lg,
     },
     emptyList: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
+        padding: Spacing.lg,
     },
     emptyState: {
         alignItems: 'center',
+        backgroundColor: Colors.backgroundCard,
+        padding: Spacing.xl,
+        borderRadius: BorderRadius.lg,
     },
     emptyTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#95a5a6',
-        marginBottom: 10,
+        fontSize: FontSizes.xl,
+        fontWeight: FontWeights.bold,
+        color: Colors.textMuted,
+        marginBottom: Spacing.md,
     },
     emptyText: {
-        fontSize: 14,
-        color: '#bdc3c7',
+        fontSize: FontSizes.sm,
+        color: Colors.textMuted,
         textAlign: 'center',
     },
     errorText: {
-        color: '#e74c3c',
-        padding: 10,
+        color: Colors.error,
+        padding: Spacing.md,
         textAlign: 'center',
+        fontSize: FontSizes.base,
     },
 });

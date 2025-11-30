@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { BorderRadius, Colors, FontSizes, FontWeights, Shadows, Spacing } from '../../../constants/theme';
 import { COFFEE_VARIETIES, COLOMBIAN_DEPARTMENTS } from '../constants/colombia';
 import { useProfile } from '../hooks/useProfile';
 
@@ -36,15 +37,15 @@ export default function ProfileScreen() {
     const handleSave = async () => {
         // Validation
         if (!region) {
-            Alert.alert('Error', 'Please select a region');
+            Alert.alert('Error', 'Por favor selecciona un departamento');
             return;
         }
         if (!hectares || isNaN(parseFloat(hectares)) || parseFloat(hectares) <= 0) {
-            Alert.alert('Error', 'Please enter a valid number of hectares');
+            Alert.alert('Error', 'Por favor ingresa un número válido de hectáreas');
             return;
         }
         if (!variety) {
-            Alert.alert('Error', 'Please select a coffee variety');
+            Alert.alert('Error', 'Por favor selecciona una variedad de café');
             return;
         }
 
@@ -57,9 +58,9 @@ export default function ProfileScreen() {
         setSaving(false);
 
         if (result.success) {
-            Alert.alert('Success', 'Profile updated successfully');
+            Alert.alert('Éxito', 'Perfil actualizado exitosamente');
         } else {
-            Alert.alert('Error', result.error || 'Failed to update profile');
+            Alert.alert('Error', result.error || 'Error al actualizar perfil');
         }
     };
 
@@ -76,7 +77,7 @@ export default function ProfileScreen() {
                     <View style={styles.modalHeader}>
                         <Text style={styles.modalTitle}>{title}</Text>
                         <TouchableOpacity onPress={onClose}>
-                            <Text style={styles.closeButton}>Close</Text>
+                            <Text style={styles.closeButton}>Cerrar</Text>
                         </TouchableOpacity>
                     </View>
                     <FlatList
@@ -102,7 +103,7 @@ export default function ProfileScreen() {
     if (loading && !profile) {
         return (
             <View style={styles.centerContainer}>
-                <Text>Loading profile...</Text>
+                <Text style={styles.loadingText}>Cargando perfil...</Text>
             </View>
         );
     }
@@ -111,47 +112,48 @@ export default function ProfileScreen() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.header}>{isEditing ? 'Edit Profile' : 'Create Profile'}</Text>
+            <Text style={styles.header}>{isEditing ? 'Editar perfil' : 'Crear perfil'}</Text>
             <Text style={styles.subHeader}>
                 {isEditing
-                    ? 'Update your farm details to keep AI recommendations accurate.'
-                    : 'Complete your profile to get personalized AI recommendations.'}
+                    ? 'Actualiza los detalles de tu cultivo y ubicación para obtener mejores recomendaciones'
+                    : 'Completa tu perfil para recibir recomendaciones personalizadas'}
             </Text>
 
             {/* Region Selection */}
             <View style={styles.field}>
-                <Text style={styles.label}>Region (Department)</Text>
+                <Text style={styles.label}>Departamento</Text>
                 <TouchableOpacity
                     style={styles.selector}
                     onPress={() => setShowRegionModal(true)}
                 >
                     <Text style={region ? styles.selectorText : styles.placeholderText}>
-                        {region || 'Select Department'}
+                        {region || 'Selecciona tu departamento'}
                     </Text>
                 </TouchableOpacity>
             </View>
 
             {/* Hectares Input */}
             <View style={styles.field}>
-                <Text style={styles.label}>Farm Size (Hectares)</Text>
+                <Text style={styles.label}>Tamaño (Hectáreas)</Text>
                 <TextInput
                     style={styles.input}
                     value={hectares}
                     onChangeText={setHectares}
-                    placeholder="e.g., 5.5"
+                    placeholder="ej. 5.5"
+                    placeholderTextColor={Colors.inputPlaceholder}
                     keyboardType="numeric"
                 />
             </View>
 
             {/* Variety Selection */}
             <View style={styles.field}>
-                <Text style={styles.label}>Coffee Variety</Text>
+                <Text style={styles.label}>Variedad de café</Text>
                 <TouchableOpacity
                     style={styles.selector}
                     onPress={() => setShowVarietyModal(true)}
                 >
                     <Text style={variety ? styles.selectorText : styles.placeholderText}>
-                        {variety || 'Select Variety'}
+                        {variety || 'Selecciona variedad'}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -162,7 +164,7 @@ export default function ProfileScreen() {
                 disabled={saving}
             >
                 <Text style={styles.saveButtonText}>
-                    {saving ? 'Saving...' : (isEditing ? 'Update Profile' : 'Create Profile')}
+                    {saving ? 'Guardando...' : (isEditing ? 'Actualizar perfil' : 'Crear perfil')}
                 </Text>
             </TouchableOpacity>
 
@@ -170,14 +172,14 @@ export default function ProfileScreen() {
             {renderSelectionModal(
                 showRegionModal,
                 () => setShowRegionModal(false),
-                'Select Department',
+                'Seleccionar Departamento',
                 COLOMBIAN_DEPARTMENTS,
                 setRegion
             )}
             {renderSelectionModal(
                 showVarietyModal,
                 () => setShowVarietyModal(false),
-                'Select Variety',
+                'Seleccionar Variedad',
                 COFFEE_VARIETIES,
                 setVariety
             )}
@@ -187,73 +189,81 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        backgroundColor: '#fff',
+        padding: Spacing.lg,
+        backgroundColor: Colors.background,
         flexGrow: 1,
     },
     centerContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: Colors.background,
+    },
+    loadingText: {
+        fontSize: FontSizes.base,
+        color: Colors.textMuted,
     },
     header: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#2c3e50',
-        marginBottom: 10,
-        marginTop: 40,
+        fontSize: FontSizes.xxxl,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
+        marginBottom: Spacing.md,
+        marginTop: Spacing.xxxl,
     },
     subHeader: {
-        fontSize: 16,
-        color: '#7f8c8d',
-        marginBottom: 30,
+        fontSize: FontSizes.base,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.xl,
+        lineHeight: 24,
     },
     field: {
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#34495e',
-        marginBottom: 8,
+        fontSize: FontSizes.base,
+        fontWeight: FontWeights.semibold,
+        color: Colors.text,
+        marginBottom: Spacing.sm,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#bdc3c7',
-        borderRadius: 8,
-        padding: 15,
-        fontSize: 16,
-        backgroundColor: '#f9f9f9',
+        borderWidth: 2,
+        borderColor: Colors.inputBorder,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.base,
+        fontSize: FontSizes.base,
+        backgroundColor: Colors.inputBackground,
+        color: Colors.text,
     },
     selector: {
-        borderWidth: 1,
-        borderColor: '#bdc3c7',
-        borderRadius: 8,
-        padding: 15,
-        backgroundColor: '#f9f9f9',
+        borderWidth: 2,
+        borderColor: Colors.inputBorder,
+        borderRadius: BorderRadius.md,
+        padding: Spacing.base,
+        backgroundColor: Colors.inputBackground,
     },
     selectorText: {
-        fontSize: 16,
-        color: '#2c3e50',
+        fontSize: FontSizes.base,
+        color: Colors.text,
     },
     placeholderText: {
-        fontSize: 16,
-        color: '#95a5a6',
+        fontSize: FontSizes.base,
+        color: Colors.inputPlaceholder,
     },
     saveButton: {
-        backgroundColor: '#27ae60',
-        padding: 18,
-        borderRadius: 10,
+        backgroundColor: Colors.primary,
+        padding: Spacing.lg,
+        borderRadius: BorderRadius.lg,
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: Spacing.lg,
+        ...Shadows.medium,
     },
     disabledButton: {
-        backgroundColor: '#95a5a6',
+        backgroundColor: Colors.textMuted,
     },
     saveButtonText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
+        color: Colors.textOnPrimary,
+        fontSize: FontSizes.lg,
+        fontWeight: FontWeights.bold,
     },
     // Modal Styles
     modalOverlay: {
@@ -262,38 +272,38 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     modalContent: {
-        backgroundColor: 'white',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        padding: 20,
+        backgroundColor: Colors.backgroundCard,
+        borderTopLeftRadius: BorderRadius.xl,
+        borderTopRightRadius: BorderRadius.xl,
+        padding: Spacing.lg,
         maxHeight: '80%',
     },
     modalHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
-        paddingBottom: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        marginBottom: Spacing.lg,
+        paddingBottom: Spacing.base,
+        borderBottomWidth: 2,
+        borderBottomColor: Colors.border,
     },
     modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#2c3e50',
+        fontSize: FontSizes.xl,
+        fontWeight: FontWeights.bold,
+        color: Colors.text,
     },
     closeButton: {
-        color: '#e74c3c',
-        fontSize: 16,
-        fontWeight: '600',
+        color: Colors.error,
+        fontSize: FontSizes.base,
+        fontWeight: FontWeights.semibold,
     },
     modalItem: {
-        paddingVertical: 15,
+        paddingVertical: Spacing.base,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
+        borderBottomColor: Colors.borderLight,
     },
     modalItemText: {
-        fontSize: 18,
-        color: '#34495e',
+        fontSize: FontSizes.lg,
+        color: Colors.text,
     },
 });
