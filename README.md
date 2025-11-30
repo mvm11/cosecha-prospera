@@ -80,11 +80,11 @@ Una aplicación móvil intuitiva que:
 
 ### Demostración en iOS
 
-![Demo de Cosecha Próspera en iOS](/Users/mateo/Desktop/cosecha-prospera/docs/ios-demo.mov)
+![Demo de Cosecha Próspera en iOS](docs/ios-demo.mov)
 
 ### Demostración en Android
 
-![Demo de Cosecha Próspera en Android](/Users/mateo/Desktop/cosecha-prospera/docs/demo-android.mov)
+![Demo de Cosecha Próspera en Android](docs/demo-android.mov)
 
 ---
 
