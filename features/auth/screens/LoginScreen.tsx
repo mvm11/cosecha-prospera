@@ -30,7 +30,11 @@ export default function LoginScreen() {
         if (error) {
             Alert.alert('Error', error.message);
         } else {
-            Alert.alert('Éxito', '¡Por favor revisa tu correo para verificar tu cuenta!');
+            Alert.alert(
+                '¡Registro Exitoso! 📧',
+                'Te hemos enviado un correo de confirmación. Por favor revisa tu bandeja de entrada y también la carpeta de spam o correos no deseados para verificar tu cuenta.',
+                [{ text: 'Entendido', style: 'default' }]
+            );
         }
         setLoading(false);
     }
